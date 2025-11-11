@@ -1,0 +1,12 @@
+# Permitir acceso a archivos PHP
+<FilesMatch "\.php$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Prevenir acceso directo a archivos de configuración
+<FilesMatch "^(config|\.htaccess)">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
