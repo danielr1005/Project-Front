@@ -66,8 +66,12 @@ $conn->close();
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="index.php">Tu Mercado SENA</a></h1>
-                <nav class="nav">
+<h1 class="logo">
+  <a href="index.php">
+      <img src="logo.png"  class="logo-img">
+      Tu Mercado SENA
+  </a>
+</h1>                <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>
@@ -109,7 +113,12 @@ $conn->close();
                     ?>
                         <div id="message-<?php echo $mensaje['id']; ?>" class="message <?php echo $message_class; ?>">
                             <p><?php echo nl2br(htmlspecialchars($mensaje['mensaje'])); ?></p>
-                            <span class="message-time"><?php echo date('d/m/Y H:i', strtotime($mensaje['fecha_registro'])); ?></span>
+                            <?php
+// Convertir fecha al horario de Bogotá
+$fecha_local = new DateTime($mensaje['fecha_registro'], new DateTimeZone('America/Bogota'));
+?>
+<span class="message-time"><?php echo $fecha_local->format('d/m/Y H:i'); ?></span>
+                            
                         </div>
                     <?php endwhile; ?>
                 </div>

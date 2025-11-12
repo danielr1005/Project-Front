@@ -85,6 +85,13 @@ body {
     font-size: 1.5rem;
     font-weight: bold;
     transition: opacity 0.3s;
+    width: 20px;
+}
+.logo-img{
+    width: 70px;
+    height: auto;
+    vertical-align: middle;
+    margin-right: 10px;
 }
 
 .logo a:hover {
@@ -159,7 +166,7 @@ body {
 
 /* Buttons */
 .btn-primary, .btn-secondary, .btn-link {
-    display: inline-block;
+    display: block;
     padding: 0.75rem 1.5rem;
     border: none;
     border-radius: 6px;
@@ -169,6 +176,7 @@ body {
     transition: all 0.3s;
     text-align: center;
     font-weight: 500;
+    
 }
 
 .btn-primary {
@@ -500,6 +508,11 @@ body {
 .form-group label {
     font-weight: 600;
     color: var(--color-primary);
+}
+/* Asegura que los campos dentro de un form-group en form-row llenen su contenedor */
+.form-row .form-group select {
+    width: 100%; 
+    box-sizing: border-box; /* Crucial para incluir el padding y borde en el 100% */
 }
 
 .form-group input,

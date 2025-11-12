@@ -66,7 +66,12 @@ $categorias_result = $conn->query($categorias_query);
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="index.php">Tu Mercado SENA</a></h1>
+              <h1 class="logo">
+    <a href="index.php">
+        <img src="logo.png"  class="logo-img">
+        Tu Mercado SENA
+    </a>
+</h1>
                 <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
@@ -94,7 +99,7 @@ $categorias_result = $conn->query($categorias_query);
                     </div>
                     <div class="filter-group">
                         <select name="categoria" class="select-input">
-                            <option value="0">Todas las categorías</option>
+                            <option value="0">Categorías</option>
                             <?php while ($cat = $categorias_result->fetch_assoc()): ?>
                                 <option value="<?php echo $cat['id']; ?>" 
                                         <?php echo $categoria_id == $cat['id'] ? 'selected' : ''; ?>>

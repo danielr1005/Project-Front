@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" required>
-                </div>
+                </div><br>
                 <button type="submit" class="btn-primary">Iniciar Sesión</button>
             </form>
             <p class="auth-link">¿No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>

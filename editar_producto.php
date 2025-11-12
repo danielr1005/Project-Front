@@ -62,8 +62,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("UPDATE productos SET nombre = ?, subcategoria_id = ?, integridad_id = ?, 
                                estado_id = ?, descripcion = ?, precio = ?, disponibles = ? 
                                WHERE id = ? AND vendedor_id = ?");
-        $stmt->bind_param("siiisi dii", $nombre, $subcategoria_id, $integridad_id, $estado_id, 
-                         $descripcion, $precio, $disponibles, $producto_id, $user['id']);
+        $stmt->bind_param("siiisidii", 
+    $nombre,          // s = string
+    $subcategoria_id, // i = int
+    $integridad_id,   // i = int
+    $estado_id,       // i = int
+    $descripcion,     // s = string
+    $precio,          // d = double
+    $disponibles,     // i = int
+    $producto_id,     // i = int
+    $user['id']       // i = int
+);
         
         if ($stmt->execute()) {
             // Manejar nueva imagen si se subió
@@ -125,8 +134,12 @@ $conn->close();
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="index.php">Tu Mercado SENA</a></h1>
-                <nav class="nav">
+<h1 class="logo">
+  <a href="index.php">
+      <img src="logo.png" class="logo-img">
+      Tu Mercado SENA
+  </a>
+</h1>                <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>

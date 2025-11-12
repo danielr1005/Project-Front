@@ -1,9 +1,13 @@
 <?php
+date_default_timezone_set('America/Bogota');
+
 // Configuración de la base de datos
 define('DB_HOST', 'localhost');
 define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'tu_mercado_sena_v3');
+
+
 
 // Iniciar sesión
 if (session_status() === PHP_SESSION_NONE) {
@@ -18,6 +22,7 @@ function getDBConnection() {
             die("Error de conexión: " . $conn->connect_error);
         }
         $conn->set_charset("utf8mb4");
+        $conn->query("SET time_zone = '-05:00'");
         return $conn;
     } catch (Exception $e) {
         die("Error de conexión: " . $e->getMessage());

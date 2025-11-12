@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="password_confirm">Confirmar Contraseña</label>
                     <input type="password" id="password_confirm" name="password_confirm" required minlength="6">
-                </div>
+                </div><br>
                 <button type="submit" class="btn-primary">Registrarse</button>
             </form>
             <p class="auth-link">¿Ya tienes cuenta? <a href="login.php">Inicia sesión aquí</a></p>
