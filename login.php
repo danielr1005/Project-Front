@@ -48,10 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Iniciar Sesión - Tu Mercado SENA</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+<script>
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+</script>
+
 <body>
     <div class="auth-container">
         <div class="auth-box">
-            <h1>Iniciar Sesión</h1>
+            <h1 class="auth-title">
+            <img src="logo.png" alt="logo" class="auth-logo">Iniciar Sesión
+            </h1>
             <?php if ($error): ?>
                 <div class="error-message"><?php echo $error; ?></div>
             <?php endif; ?>
@@ -63,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="password">Contraseña</label>
                     <input type="password" id="password" name="password" required>
-                </div><br>
+                </div>
                 <button type="submit" class="btn-primary">Iniciar Sesión</button>
             </form>
             <p class="auth-link">¿No tienes cuenta? <a href="register.php">Regístrate aquí</a></p>

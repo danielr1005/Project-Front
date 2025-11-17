@@ -30,6 +30,37 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mis Productos - Tu Mercado SENA</title>
     <link rel="stylesheet" href="styles.css">
+
+    <style>
+        .alert-success {
+            background: #d4ffd8;
+            color: #155724;
+            border: 1px solid #6dd17c;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 16px;
+        }
+        .btn-delete {
+            background: #d9534f;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+        }
+        .btn-delete:hover {
+            background: #c9302c;
+        }
+        .product-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+    </style>
+
 </head>
 <body>
     <header class="header">
@@ -37,21 +68,15 @@ $conn->close();
             <div class="header-content">
                 <h1 class="logo">
                 <a href="index.php">
-            <img src="logo.png"  class="logo-img">
-                 Tu Mercado SENA
-                            </a>
-</h1>
+                    <img src="logo.png" class="logo-img">
+                    Tu Mercado SENA
+                </a>
+                </h1>
                 <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>
-                    <div class="notification-badge">
-                        <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>
-                        <span class="notification-count hidden" id="notificationCount">0</span>
-                        <div class="chats-list" id="chatsList"></div>
-                    </div>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                    <a href="logout.php">Cerrar Sesión</a>
+                    <button id="themeToggle" class="theme-toggle" title="Cambiar tema">🌓</button>
                 </nav>
             </div>
         </div>
@@ -59,6 +84,14 @@ $conn->close();
 
     <main class="main">
         <div class="container">
+
+            <!-- MENSAJE CUANDO SE ELIMINA UN PRODUCTO -->
+            <?php if (isset($_GET['mensaje']) && $_GET['mensaje'] === 'producto_eliminado'): ?>
+                <div class="alert-success">
+                    ✅ Producto eliminado correctamente.
+                </div>
+            <?php endif; ?>
+
             <div class="page-header">
                 <h1>Mis Productos</h1>
                 <a href="publicar.php" class="btn-primary">Publicar Nuevo Producto</a>
@@ -69,14 +102,22 @@ $conn->close();
                     <?php while ($producto = $productos_result->fetch_assoc()): ?>
                         <div class="product-card">
                             <a href="producto.php?id=<?php echo $producto['id']; ?>">
-                                <?php if ($producto['con_imagen']): ?>
-                                    <img src="uploads/img_<?php echo $producto['id']; ?>.jpg" 
-                                         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-                                         class="product-image"
-                                         onerror="this.src='images/placeholder.jpg'">
-                                <?php else: ?>
-                                    <div class="product-image placeholder">Sin imagen</div>
-                                <?php endif; ?>
+<?php
+// Buscar imágenes que contengan el ID del producto en su nombre
+$pattern = "uploads/*" . $producto['id'] . "*.*";
+$files = glob($pattern, GLOB_BRACE);
+
+if (!empty($files)) {
+    $imagen = $files[0];
+} else {
+    $imagen = "images/placeholder.jpg";
+}
+?>
+
+<img src="<?php echo $imagen; ?>" 
+     alt="<?php echo htmlspecialchars($producto['nombre']); ?>" 
+     class="product-image">
+
                                 <div class="product-info">
                                     <h3 class="product-name"><?php echo htmlspecialchars($producto['nombre']); ?></h3>
                                     <p class="product-price"><?php echo formatPrice($producto['precio']); ?></p>
@@ -88,9 +129,18 @@ $conn->close();
                                     <span class="product-stock">Disponibles: <?php echo $producto['disponibles']; ?></span>
                                 </div>
                             </a>
+
                             <div class="product-actions">
                                 <a href="editar_producto.php?id=<?php echo $producto['id']; ?>" class="btn-small">Editar</a>
+
+                                <!-- BOTÓN ELIMINAR CON CONFIRMACIÓN -->
+                                <a href="eliminar_producto.php?id=<?php echo $producto['id']; ?>"
+                                   class="btn-delete"
+                                   onclick="return confirm('¿Estás seguro de que deseas eliminar este producto? Esta acción no se puede deshacer.');">
+                                   Eliminar
+                                </a>
                             </div>
+
                         </div>
                     <?php endwhile; ?>
                 <?php else: ?>

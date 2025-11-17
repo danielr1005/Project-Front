@@ -22,22 +22,18 @@
     --shadow-hover: 0 4px 12px rgba(83, 131, 146, 0.2);
     --border-color: #B1CCD2;
 }
-
 /* Modo Oscuro */
 [data-theme="dark"] {
-    --color-primary: #393A5D;
-    --color-secondary: #3C3E63;
+    --color-primary: #A9B3F2;           
+    --color-secondary: #545EA0;         
     --color-accent: #4A4C7A;
-    --color-light: #A9B3F2;
-    --color-white: #FFFFFF;
-    --color-black: #000000;
-    --color-text: #FFFFFF;
-    --color-text-light: #E0E0E0;
-    --color-bg: #393A5D;
-    --color-bg-secondary: #3C3E63;
-    --color-bg-light: #4A4C7A;
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
+    --color-text: #FFFFFF;            
+    --color-text-light: #D8DAF8;     
+    --color-bg: #1E1F33;               
+    --color-bg-secondary: #2A2C44;      
+    --color-bg-light: #3A3C5C;         
+    --shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.7);
     --border-color: #545EA0;
 }
 
@@ -78,6 +74,19 @@ body {
     flex-wrap: wrap;
     gap: 1rem;
 }
+.auth-title {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centrar todo */
+    gap: 5px;               /* Espacio entre logo y texto */
+    margin-bottom: 20px;
+}
+
+.auth-logo {
+    width: 80px;   /* Ajusta según tamaño de tu logo */
+    height: auto;
+    border-radius: 8px; /* Opcional, por si quieres esquinas suaves */
+}
 
 .logo a {
     color: var(--color-white);
@@ -88,10 +97,10 @@ body {
     width: 20px;
 }
 .logo-img{
-    width: 70px;
+    width: 50px;
     height: auto;
     vertical-align: middle;
-    margin-right: 10px;
+    margin-right: 5px;
 }
 
 .logo a:hover {
@@ -100,7 +109,7 @@ body {
 
 .nav {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     align-items: center;
     flex-wrap: wrap;
 }
@@ -108,8 +117,8 @@ body {
 .nav a {
     color: var(--color-white);
     text-decoration: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
     transition: background-color 0.3s, transform 0.2s;
 }
 
@@ -132,16 +141,17 @@ body {
     background-color: rgba(255, 255, 255, 0.2);
     border: none;
     color: var(--color-white);
-    padding: 0.5rem 1rem;
+    padding: 0.4rem 0.7rem;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 1.2rem;
+    font-size: 1rem;
     transition: background-color 0.3s;
 }
 
 .theme-toggle:hover {
     background-color: rgba(255, 255, 255, 0.3);
 }
+
 
 /* Main Content */
 .main {
@@ -222,12 +232,94 @@ body {
     background-color: var(--color-secondary);
     transform: translateY(-2px);
 }
+/* ------ ESTILOS PROFESIONALES PARA LOGIN / REGISTRO ------ */
+
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.auth-box {
+    width: 380px;
+    background: var(--color-white);
+    padding: 35px;
+    border-radius: 15px;
+    box-shadow: var(--shadow);
+}
+
+.auth-box h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+/* Grupo de input */
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: var(--color-text);
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    font-size: 15px;
+    background: var(--color-bg-secondary);
+    color: var(--color-text);
+}
+
+/* Botón del login (usa btn-primary pero adaptado aquí) */
+.auth-box .btn-primary {
+    width: 70%;
+    margin: 15px auto;
+    display: block;
+    margin-top: 10px;
+    padding: 12px;
+    font-size: 1.05rem;
+    font-weight: 600;
+    border-radius: 8px;
+}
+
+/* Links de abajo */
+.auth-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+.auth-link a {
+    color: var(--color-primary);
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.error-message {
+    background: #ffdddd;
+    color: #b30000;
+    padding: 10px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
 
 /* Products Grid */
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
     margin-top: 2rem;
 }
 
@@ -257,7 +349,7 @@ body {
 
 .product-image {
     width: 100%;
-    height: 200px;
+    height: 180px;
     object-fit: cover;
     background: linear-gradient(135deg, var(--color-light) 0%, var(--color-accent) 100%);
 }
@@ -271,7 +363,7 @@ body {
 }
 
 .product-info {
-    padding: 1.5rem;
+    padding: 1rem;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -441,7 +533,7 @@ body {
 /* Filters */
 .filters-section {
     background-color: var(--color-bg);
-    padding: 1.5rem;
+    padding: 1rem;
     border-radius: 12px;
     box-shadow: var(--shadow);
     margin-bottom: 2rem;
@@ -462,10 +554,10 @@ body {
 
 .search-input, .select-input {
     width: 100%;
-    padding: 0.75rem;
+    padding: 0.5rem 0.75rem;
     border: 2px solid var(--border-color);
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     background-color: var(--color-bg);
     color: var(--color-text);
     transition: border-color 0.3s;
@@ -1259,11 +1351,13 @@ input:checked + .slider:before {
         width: 100%;
         margin-top: 1rem;
     }
-    
-    .filters-form {
-        flex-direction: column;
-    }
-    
+.filters-form {
+    display: flex;
+    /* Reducir el espacio entre los campos */
+    gap: 0.8rem; 
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
     .filter-group {
         width: 100%;
     }

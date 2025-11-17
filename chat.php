@@ -69,7 +69,7 @@ $conn->close();
 <h1 class="logo">
   <a href="index.php">
       <img src="logo.png"  class="logo-img">
-      Tu Mercado SENA
+      Tu Mercado SENA   
   </a>
 </h1>                <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
@@ -81,7 +81,7 @@ $conn->close();
                         <div class="chats-list" id="chatsList"></div>
                     </div>
                     <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                    <a href="logout.php">Cerrar Sesión</a>
+
                 </nav>
             </div>
         </div>
@@ -114,10 +114,9 @@ $conn->close();
                         <div id="message-<?php echo $mensaje['id']; ?>" class="message <?php echo $message_class; ?>">
                             <p><?php echo nl2br(htmlspecialchars($mensaje['mensaje'])); ?></p>
                             <?php
-// Convertir fecha al horario de Bogotá
-$fecha_local = new DateTime($mensaje['fecha_registro'], new DateTimeZone('America/Bogota'));
+
 ?>
-<span class="message-time"><?php echo $fecha_local->format('d/m/Y H:i'); ?></span>
+<span class="message-time"><?php echo formato_tiempo_relativo($mensaje['fecha_registro']); ?></span>
                             
                         </div>
                     <?php endwhile; ?>

@@ -1,4 +1,5 @@
 <?php
+
 require_once 'config.php';
 
 // Redirigir a login si no está autenticado
@@ -85,7 +86,6 @@ $conn->close();
                         <div class="chats-list" id="chatsList"></div>
                     </div>
                     <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                    <a href="logout.php">Cerrar Sesión</a>
                     <a href="index.php">Volver</a>
                 </nav>
             </div>
@@ -96,15 +96,22 @@ $conn->close();
         <div class="container">
             <div class="product-detail">
                 <div class="product-image-section">
-                    <?php if ($producto['con_imagen']): ?>
-                        <img src="uploads/img_<?php echo $producto['id']; ?>.jpg" 
-                             alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-                             class="product-detail-image"
-                             onerror="this.src='images/placeholder.jpg'">
-                    <?php else: ?>
-                        <div class="product-detail-image placeholder">Sin imagen</div>
-                    <?php endif; ?>
-                </div>
+<?php
+$pattern = "uploads/*" . $producto['id'] . "*.*";
+$files = glob($pattern, GLOB_BRACE);
+
+if (!empty($files)) {
+    $imagen = $files[0];
+} else {
+    $imagen = "images/placeholder.jpg";
+}
+?>
+
+<img src="<?php echo $imagen; ?>"
+     alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
+     class="product-detail-image">
+
+</div>
                 
                 <div class="product-detail-info">
                     <h1 class="product-detail-title"><?php echo htmlspecialchars($producto['nombre']); ?></h1>
@@ -134,6 +141,7 @@ $conn->close();
                     <div class="product-actions">
                         <?php if ($user['id'] == $producto['vendedor_id']): ?>
                             <a href="editar_producto.php?id=<?php echo $producto['id']; ?>" class="btn-secondary">Editar Producto</a>
+                            <a href="eliminar_producto.php?id=<?php echo $producto['id']; ?>"class="btn-secondary"onclick="return confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.');">Eliminar Producto</a>
                         <?php else: ?>
                             <?php if ($chat_existente): ?>
                                 <a href="chat.php?id=<?php echo $chat_existente['id']; ?>" class="btn-primary">Ver Conversación</a>

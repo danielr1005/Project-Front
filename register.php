@@ -80,7 +80,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <body>
     <div class="auth-container">
         <div class="auth-box">
-            <h1>Registro</h1>
+            <h1 class="auth-title">
+            <img src="logo.png" alt="logo" class="auth-logo">Registro
+            </h1>
             <?php if ($error): ?>
                 <div class="error-message"><?php echo $error; ?></div>
             <?php endif; ?>
@@ -104,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="form-group">
                     <label for="password_confirm">Confirmar Contraseña</label>
                     <input type="password" id="password_confirm" name="password_confirm" required minlength="6">
-                </div><br>
+                </div>
                 <button type="submit" class="btn-primary">Registrarse</button>
             </form>
             <p class="auth-link">¿Ya tienes cuenta? <a href="login.php">Inicia sesión aquí</a></p>

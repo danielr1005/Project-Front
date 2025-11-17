@@ -115,7 +115,6 @@ $conn->close();
                         <div class="chats-list" id="chatsList"></div>
                     </div>
                     <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                    <a href="logout.php">Cerrar Sesión</a>
                 </nav>
             </div>
         </div>

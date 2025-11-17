@@ -144,7 +144,6 @@ $conn->close();
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>
                     <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                    <a href="logout.php">Cerrar Sesión</a>
                 </nav>
             </div>
         </div>

@@ -18,6 +18,7 @@ function updateThemeIcon(theme) {
         themeToggle.textContent = theme === 'dark' ? '☀️' : '🌙';
     }
 }
+document.addEventListener("DOMContentLoaded", initTheme);
 
 // ==================== CHAT EN TIEMPO REAL ====================
 let chatPollingInterval = null;
@@ -56,24 +57,35 @@ function loadNewMessages(chatId) {
         .catch(err => console.error('Error al cargar mensajes:', err));
 }
 
+// 🎯 FUNCIÓN CORREGIDA
 function addMessageToChat(message, container) {
     if (document.getElementById(`message-${message.id}`)) return;
 
     const messageDiv = document.createElement('div');
     messageDiv.id = `message-${message.id}`;
+    // Usamos el campo 'es_comprador' para determinar la clase
     messageDiv.className = `message ${message.es_comprador == 1 ? 'message-sent' : 'message-received'}`;
 
     const messageText = document.createElement('p');
+    // Usamos innerHTML porque el PHP ya aplicó nl2br y sanitización
     messageText.innerHTML = message.mensaje.replace(/\n/g, '<br>');
 
     const messageTime = document.createElement('span');
     messageTime.className = 'message-time';
-    messageTime.textContent = formatMessageTime(message.fecha_formateada || message.fecha_registro);
+    
+    // ✅ CLAVE: Si viene el campo tiempo_relativo (del envío AJAX), lo usamos directamente.
+    if (message.tiempo_relativo) {
+        messageTime.textContent = message.tiempo_relativo;
+    } else {
+        // Si no viene (del polling), usamos la función JS local.
+        messageTime.textContent = formatMessageTime(message.fecha_formateada || message.fecha_registro);
+    }
 
     messageDiv.appendChild(messageText);
     messageDiv.appendChild(messageTime);
     container.appendChild(messageDiv);
 }
+
 // ✅ Mostrar hora correcta (sin restar 5h)
 function formatMessageTime(timestamp) {
     const date = new Date(timestamp); // viene ya con zona -05:00 (Bogotá)
@@ -92,6 +104,21 @@ function formatMessageTime(timestamp) {
         hour: '2-digit',
         minute: '2-digit',
         hour12: true
+    });
+}
+
+function updateNotifications(count, chats) {
+    const countEl = document.getElementById('notificationCount');
+    if (count > 0) countEl.classList.remove('hidden');
+    else countEl.classList.add('hidden');
+    countEl.textContent = count;
+
+    const chatsList = document.getElementById('chatsList');
+    chatsList.innerHTML = '';
+    chats.forEach(chat => {
+        const div = document.createElement('div');
+        div.textContent = chat.nombre;
+        chatsList.appendChild(div);
     });
 }
 
@@ -115,11 +142,12 @@ function sendMessage(chatId, messageText, callback) {
         .then(r => r.json())
         .then(data => {
             if (!data.success) {
-                alert('Error al enviar mensaje: ' + (data.error || 'Error desconocido'));
+                console.error('Error al enviar mensaje: ' + (data.error || 'Error desconocido'));
                 return;
             }
 
             const chatMessages = document.getElementById('chatMessages');
+            // ✅ USAMOS data.message que ahora contiene el campo tiempo_relativo
             if (chatMessages && data.message) {
                 addMessageToChat(data.message, chatMessages);
                 lastMessageId = Math.max(lastMessageId, data.message.id);
@@ -130,7 +158,7 @@ function sendMessage(chatId, messageText, callback) {
         })
         .catch(err => {
             console.error('Error al enviar mensaje:', err);
-            alert('Error al enviar mensaje. Por favor intenta de nuevo.');
+            console.error('Error al enviar mensaje. Por favor intenta de nuevo.');
         });
 }
 

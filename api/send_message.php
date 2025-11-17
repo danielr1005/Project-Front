@@ -1,8 +1,9 @@
+
 <?php
 require_once '../config.php';
 header('Content-Type: application/json');
 
-//  Establecer zona horaria colombiana
+// Establecer zona horaria colombiana (NECESARIO para la función formato_tiempo_relativo)
 date_default_timezone_set('America/Bogota');
 
 if (!isLoggedIn()) {
@@ -30,6 +31,7 @@ $stmt = $conn->prepare("
 ");
 $stmt->bind_param("i", $chat_id);
 $stmt->execute();
+
 $result = $stmt->get_result();
 $chat = $result->fetch_assoc();
 $stmt->close();
@@ -53,18 +55,18 @@ if (!$es_comprador && !$es_vendedor) {
 // Sanitizar mensaje
 $mensaje = sanitize($mensaje);
 
-// Insertar mensaje con fecha local
+// Determinar rol del mensaje
 $es_comprador_msg = $es_comprador ? 1 : 0;
 $es_imagen = 0;
 
-// Generar fecha actual desde PHP (Bogotá)
-$fecha_actual = date('Y-m-d H:i:s');
-
+// ✅ INSERCIÓN CORREGIDA: Dejamos que el campo fecha_registro en MySQL use CURRENT_TIMESTAMP().
 $stmt = $conn->prepare("
-    INSERT INTO mensajes (es_comprador, chat_id, mensaje, es_imagen, fecha_registro)
-    VALUES (?, ?, ?, ?, ?)
+    INSERT INTO mensajes (es_comprador, chat_id, mensaje, es_imagen)
+    VALUES (?, ?, ?, ?)
 ");
-$stmt->bind_param("iisis", $es_comprador_msg, $chat_id, $mensaje, $es_imagen, $fecha_actual);
+// Quitamos 's' del bind_param y quitamos el parámetro de fecha
+$stmt->bind_param("iisi", $es_comprador_msg, $chat_id, $mensaje, $es_imagen); 
+
 if ($stmt->execute()) {
     $message_id = $conn->insert_id;
 
@@ -78,20 +80,24 @@ if ($stmt->execute()) {
     $stmt2->execute();
     $stmt2->close();
 
-   $stmt3 = $conn->prepare("SELECT id, es_comprador, mensaje, fecha_registro FROM mensajes WHERE id = ?");
-$stmt3->bind_param("i", $message_id);
-$stmt3->execute();
-$result = $stmt3->get_result();
-$message = $result->fetch_assoc();
-$stmt3->close();
+    // RECUPERAR EL MENSAJE Y LA FECHA REAL GUARDADA
+    $stmt3 = $conn->prepare("SELECT id, es_comprador, mensaje, fecha_registro FROM mensajes WHERE id = ?");
+    $stmt3->bind_param("i", $message_id);
+    $stmt3->execute();
+    $result = $stmt3->get_result();
+    $message = $result->fetch_assoc();
+    $stmt3->close();
 
-// ✅ Convertir manualmente de UTC → Bogotá (-5h)
-$utc = new DateTime($message['fecha_registro'], new DateTimeZone('UTC'));
-$utc->setTimezone(new DateTimeZone('America/Bogota'));
-$message['fecha_registro'] = $utc->format('Y-m-d H:i:s');
+    // ✅ Formatear el mensaje para que JS lo muestre con saltos de línea y sanitizado
+    $message['mensaje'] = nl2br(htmlspecialchars($message['mensaje']));
+    
+    // ✅ Formatear el tiempo usando la función relativa (será "Ahora")
+    $message['tiempo_relativo'] = formato_tiempo_relativo($message['fecha_registro']);
+    
+    // ✅ CLAVE: Devolver el objeto $message completo bajo la clave 'message'
     echo json_encode([
         'success' => true,
-        'message' => $message
+        'message' => $message 
     ]);
 } else {
     echo json_encode(['success' => false, 'error' => 'Error al guardar mensaje']);

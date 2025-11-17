@@ -1,5 +1,5 @@
 <?php
-date_default_timezone_set('America/Bogota');
+
 
 // Configuración de la base de datos
 define('DB_HOST', 'localhost');
@@ -7,7 +7,44 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 define('DB_NAME', 'tu_mercado_sena_v3');
 
+function formato_tiempo_relativo($timestamp_db) {
+    // 1. Configurar la zona horaria del servidor (¡MUY IMPORTANTE!)
+    // Usamos la hora actual de tu ubicación para ser precisos.
+    date_default_timezone_set('America/Bogota'); 
+    
+    // 2. Calcular la diferencia
+    $tiempo_mensaje = strtotime($timestamp_db);
+    $tiempo_actual  = time();
+    $diferencia     = $tiempo_actual - $tiempo_mensaje;
 
+    // 3. Definir límites y formatos
+    $segundos_por_minuto = 60;
+    $segundos_por_hora   = 3600;
+    $segundos_por_dia    = 86400;
+
+    if ($diferencia < 30) {
+        return "Ahora";
+    } elseif ($diferencia < $segundos_por_minuto) {
+        return "hace " . $diferencia . " segundos";
+    } elseif ($diferencia < ($segundos_por_minuto * 60)) {
+        // Minutos
+        $minutos = round($diferencia / $segundos_por_minuto);
+        if ($minutos == 1) {
+            return "hace 1 minuto";
+        }
+        return "hace " . $minutos . " minutos";
+    } elseif ($diferencia < $segundos_por_dia) {
+        // Horas
+        $horas = round($diferencia / $segundos_por_hora);
+        if ($horas == 1) {
+            return "hace 1 hora";
+        }
+        return "hace " . $horas . " horas";
+    } else {
+        // Si es más de un día, mostramos la fecha corta
+        return date('d M', $tiempo_mensaje); // Ej: 14 Nov
+    }
+}
 
 // Iniciar sesión
 if (session_status() === PHP_SESSION_NONE) {
