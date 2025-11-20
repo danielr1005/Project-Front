@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $password_hash = password_hash($password, PASSWORD_DEFAULT);
             
             // Insertar usuario (rol_id = 3 es usuario normal)
-            $rol_id = 3;
+          $rol_id = $_POST['rol_id'];
             $estado_id = 1; // activo
             $avatar = 0;
             $descripcion = '';
@@ -90,6 +90,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="success-message"><?php echo $success; ?></div>
             <?php endif; ?>
             <form method="POST" action="register.php">
+                <div class="form-group">
+    <label for="rol_id">Tipo de cuenta</label>
+    <select name="rol_id" id="rol_id" required>
+        <option value="1">Comprador</option>
+        <option value="2">Vendedor</option>
+    </select>
+</div>
                 <div class="form-group">
                     <label for="nombre">Nombre de Usuario</label>
                     <input type="text" id="nombre" name="nombre" required>

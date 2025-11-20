@@ -10,6 +10,11 @@ $user = getCurrentUser();
 $error = '';
 $success = '';
 
+// SOLO permitir rol 2 (vendedor)
+//if ($user['rol_id'] != 2) {
+  //  header("Location: index.php");
+    //exit;
+//}
 $conn = getDBConnection();
 
 // Obtener categorías y subcategorías

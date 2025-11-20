@@ -62,14 +62,25 @@ $stmt->execute();
 $result = $stmt->get_result();
 
 $messages = [];
-while ($row = $result->fetch_assoc()) {
-    // Convertir es_comprador según el usuario actual para mostrar correctamente
-    // Si es vendedor, invertimos el valor para que se muestre correctamente
-    if ($es_vendedor) {
-        $row['es_comprador'] = $row['es_comprador'] == 1 ? 0 : 1;
+
+  while ($row = $result->fetch_assoc()) {
+
+    // es_comprador indica quién lo envió
+    $mensajeLoEscribioElComprador = ($row['es_comprador'] == 1);
+
+    // ¿El usuario actual es comprador o vendedor?
+    if ($es_comprador) {
+        // Si soy el comprador → el mensaje es mío si lo escribió el comprador
+        $row['es_mio'] = $mensajeLoEscribioElComprador ? 1 : 0;
+    } else {
+        // Si soy el vendedor → el mensaje es mío si NO lo escribió el comprador
+        $row['es_mio'] = $mensajeLoEscribioElComprador ? 0 : 1;
     }
+
     $messages[] = $row;
 }
+ 
+
 
 $stmt->close();
 

@@ -25,6 +25,9 @@ $stmt = $conn->prepare("SELECT c.*, p.nombre as producto_nombre, p.precio as pro
                        INNER JOIN usuarios u_comprador ON c.comprador_id = u_comprador.id
                        INNER JOIN usuarios u_vendedor ON p.vendedor_id = u_vendedor.id
                        WHERE c.id = ?");
+
+    
+
 $stmt->bind_param("i", $chat_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -44,6 +47,14 @@ if (!$es_comprador && !$es_vendedor) {
     header('Location: index.php');
     exit;
 }
+if ($es_comprador) {
+    $stmt = $conn->prepare("UPDATE chats SET visto_comprador = 1 WHERE id = ?");
+} else {
+    $stmt = $conn->prepare("UPDATE chats SET visto_vendedor = 1 WHERE id = ?");
+}
+$stmt->bind_param("i", $chat_id);
+$stmt->execute();
+$stmt->close();
 
 // Obtener mensajes (los nuevos se cargan vía AJAX)
 $stmt = $conn->prepare("SELECT * FROM mensajes WHERE chat_id = ? ORDER BY fecha_registro ASC");

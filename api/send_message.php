@@ -93,6 +93,8 @@ if ($stmt->execute()) {
     
     // ✅ Formatear el tiempo usando la función relativa (será "Ahora")
     $message['tiempo_relativo'] = formato_tiempo_relativo($message['fecha_registro']);
+    $message['es_mio'] = 1;
+
     
     // ✅ CLAVE: Devolver el objeto $message completo bajo la clave 'message'
     echo json_encode([
