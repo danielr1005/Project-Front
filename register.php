@@ -57,7 +57,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmt->bind_param("isissssi", $correo_id, $password_hash, $rol_id, $nombre, $avatar, $descripcion, $link, $estado_id);
             
             if ($stmt->execute()) {
-                $success = 'Registro exitoso. Ahora puedes iniciar sesión.';
+                header('Location:login.php');
+                exit();
             } else {
                 $error = 'Error al registrar usuario: ' . $conn->error;
             }

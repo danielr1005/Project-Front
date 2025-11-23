@@ -140,7 +140,11 @@ $categorias_result = $conn->query($categorias_query);
                                     <p class="product-seller">Vendedor: <?php echo htmlspecialchars($producto['vendedor_nombre']); ?></p>
                                     <p class="product-category"><?php echo htmlspecialchars($producto['categoria_nombre']); ?> - 
                                        <?php echo htmlspecialchars($producto['subcategoria_nombre']); ?></p>
-                                    <span class="product-condition"><?php echo htmlspecialchars($producto['integridad_nombre']); ?></span>
+                                    <span class="product-condition 
+                                    <?php echo (strtolower($producto['integridad_nombre']) == 'nuevo') ? 'condition-nuevo' : ''; ?>
+                                    <?php echo (strtolower($producto['integridad_nombre']) == 'usado') ? 'condition-usado' : ''; ?>">
+                                    <?php echo htmlspecialchars($producto['integridad_nombre']); ?>
+                                    </span>
                                     <span class="product-stock">Disponibles: <?php echo $producto['disponibles']; ?></span>
                                 </div>
                             </a>

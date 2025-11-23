@@ -391,14 +391,28 @@ body {
 }
 
 .product-condition {
-    display: inline-block;
-    background-color: var(--color-light);
-    padding: 0.25rem 0.75rem;
-    border-radius: 20px;
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    color: var(--color-text);
+display: inline-block;
+ background-color: var(--color-light); /* Fondo claro que quieres en modo claro */
+padding: 0.25rem 0.75rem;
+border-radius: 20px;
+font-size: 0.85rem;
+margin-top: 0.5rem;
+color: var(--color-text); /* Texto oscuro que quieres en modo claro */
+font-weight: 600; /* Asumiendo que esta es la negrita del modo claro */
 }
+[data-theme="dark"] .condition-nuevo {
+    /* Aquí aplicamos tu esquema de colores de alto contraste */
+    background-color: var(--color-secondary) !important; /* Usamos #545EA0 de tu paleta oscura */
+    color: var(--color-white) !important;                /* Usamos #FFFFFF (que es color-white o color-text en modo oscuro) */
+    font-weight: bold !important;
+}
+
+[data-theme="dark"] .condition-usado {
+    /* Usamos el color de acento para diferenciar del nuevo */
+    background-color: var(--color-accent) !important; /* Usamos #4A4C7A de tu paleta oscura */
+    color: var(--color-text-light) !important;       /* Usamos #D8DAF8 para contraste */
+}
+
 
 .product-stock {
     font-size: 0.85rem;
