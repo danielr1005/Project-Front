@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-container">
         <div class="auth-box">
             <h1 class="auth-title">
-            <img src="logo.png" alt="logo" class="auth-logo">Registro
+            <img src="logo_new.png" alt="logo" class="auth-logo">Registro
             </h1>
             <?php if ($error): ?>
                 <div class="error-message"><?php echo $error; ?></div>

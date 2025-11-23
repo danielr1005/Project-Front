@@ -68,7 +68,7 @@ $categorias_result = $conn->query($categorias_query);
             <div class="header-content">
               <h1 class="logo">
     <a href="index.php">
-        <img src="logo.png"  class="logo-img">
+        <img src="logo_new.png"  class="logo-img">
         Tu Mercado SENA
     </a>
 </h1>

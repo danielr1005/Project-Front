@@ -105,18 +105,24 @@ $conn->close();
     <header class="header">
         <div class="container">
             <div class="header-content">
-                <h1 class="logo"><a href="index.php">Tu Mercado SENA</a></h1>
+               <h1 class="logo">
+                <a href="index.php">
+                    <img src="logo_new.png" class="logo-img">
+                    Tu Mercado SENA
+                </a>
+                </h1>
                 <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>
+
                     <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
                     <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                    <a href="logout.php">Cerrar Sesión</a>
+                
                 </nav>
             </div>
         </div>
@@ -130,6 +136,7 @@ $conn->close();
                         <li><a href="#" data-section="perfil" class="<?php echo $active_section === 'perfil' ? 'active' : ''; ?>">Información Personal</a></li>
                         <li><a href="#" data-section="configuracion" class="<?php echo $active_section === 'configuracion' ? 'active' : ''; ?>">Configuración</a></li>
                         <li><a href="#" data-section="seguridad" class="<?php echo $active_section === 'seguridad' ? 'active' : ''; ?>">Seguridad</a></li>
+                        <li><a href="logout.php">Cerrar Sesión</a></li>
                     </ul>
                 </div>
                 

@@ -695,6 +695,9 @@ forms.forEach(form => {
     const settingsLinks = document.querySelectorAll('.settings-sidebar a');
     settingsLinks.forEach(link => {
         link.addEventListener('click', function(e) {
+            if (!this.hasAttribute('data-section')) {
+                return;
+            }
             e.preventDefault();
             const target = this.getAttribute('data-section');
             if (target) {

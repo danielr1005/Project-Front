@@ -47,9 +47,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $conn->prepare("INSERT INTO productos (nombre, con_imagen, subcategoria_id, integridad_id, 
                                vendedor_id, estado_id, descripcion, precio, disponibles) 
                                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("siiisiidi", $nombre, $con_imagen, $subcategoria_id, $integridad_id, 
-                         $vendedor_id, $estado_id, $descripcion, $precio, $disponibles);
-        
+        $stmt->bind_param("siiisisdi", 
+        $nombre, 
+        $con_imagen, 
+        $subcategoria_id, 
+        $integridad_id, 
+        $vendedor_id, 
+        $estado_id, 
+        $descripcion, 
+        $precio, 
+        $disponibles
+    );
         if ($stmt->execute()) {
             $producto_id = $conn->insert_id;
             
@@ -61,10 +69,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 
                 $file_extension = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
-                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
+                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'avif' , 'webp'];
                 
                 if (in_array($file_extension, $allowed_extensions)) {
-                    $target_file = $upload_dir . 'img_' . $producto_id . '.jpg';
+                    $target_file = $upload_dir . 'img_' . $producto_id . '.' . $file_extension;
                     
                     if (move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file)) {
                         // Actualizar producto para indicar que tiene imagen
@@ -107,7 +115,7 @@ $conn->close();
             <div class="header-content">
 <h1 class="logo">
   <a href="index.php">
-      <img src="logo.png" class="logo-img">
+      <img src="logo_new.png" class="logo-img">
       Tu Mercado SENA
   </a>
 </h1>                <nav class="nav">
@@ -196,8 +204,8 @@ $conn->close();
                     
                     <div class="form-group">
                         <label for="imagen">Imagen del Producto (opcional)</label>
-                        <input type="file" id="imagen" name="imagen" accept="image/jpeg,image/jpg,image/png,image/gif">
-                        <small>Formatos aceptados: JPG, PNG, GIF</small>
+                        <input type="file" id="imagen" name="imagen" accept="image/jpeg,image/jpg,image/png,image/gif,image/avif,image/webp">
+                        <small>Formatos aceptados: JPG, PNG, GIF, AVIF, WEBP</small>
                     </div>
                     
                     <button type="submit" class="btn-primary">Publicar Producto</button>
