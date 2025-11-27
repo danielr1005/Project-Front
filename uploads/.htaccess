@@ -1,6 +1,0 @@
-# Permitir acceso a imágenes
-<FilesMatch "\.(jpg|jpeg|png|gif)$">
-    Order Allow,Deny
-    Allow from all
-</FilesMatch>
-
