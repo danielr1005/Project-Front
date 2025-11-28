@@ -123,9 +123,6 @@ $conn->close();
                     <a href="publicar.php" class="<?= $current_page == 'publicar.php' ? 'active' : '' ?>">
                         Publicar Producto
                     </a>
-                    <a href="perfil.php" class="<?= $current_page == 'perfil.php' ? 'active' : '' ?>">
-                        Perfil
-                    </a>
                     <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>
                         <span class="notification-count hidden" id="notificationCount">0</span>

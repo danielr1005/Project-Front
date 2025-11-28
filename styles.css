@@ -116,16 +116,32 @@ body {
 }
 
 .nav a {
-    color: var(--color-white);
     text-decoration: none;
-    padding: 0.4rem 0.8rem;
-    border-radius: 4px;
-    transition: background-color 0.3s, transform 0.2s;
+    
+    /* 💥 CLAVE: Color de texto blanco en estado normal */
+    color: white; 
+    
+    font-weight: 500;
+    
+    /* Estilo de botón/cápsula */
+    padding: 8px 15px; 
+    border-radius: 20px; 
+    transition: background-color 0.2s, font-weight 0.2s; 
+    white-space: nowrap; 
 }
 
+/* Efecto hover (Al pasar el ratón) */
 .nav a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-    transform: translateY(-2px);
+    background-color: rgba(255, 255, 255, 0.15); 
+    color: white; 
+    font-weight: 700; 
+}
+
+/* Resaltar la página activa */
+.nav a.active {
+    background-color: var(--color-primary); 
+    color: white; 
+    font-weight: 700; 
 }
 
 .user-name {
@@ -1416,4 +1432,51 @@ input:checked + .slider:before {
         right: 10px;
         top: 10px;
     }
+}
+
+
+
+/* --- ENLACE DE PERFIL (CONTENEDOR DE HOVER) --- */
+.nav .perfil-link {
+    text-decoration: none !important; 
+    color: inherit; 
+    
+    /* 💥 CLAVE: Este contenedor debe ser un elemento 'inline' para que 
+       el padding y border-radius definan correctamente el área de hover.
+       Lo ponemos inline-block para que acepte padding y margin. */
+    display: inline-block; 
+    
+    padding: 5px 10px; /* Define el área de hover */
+    border-radius: 20px;
+    transition: background-color 0.2s;
+    margin-left: 0px; 
+}
+
+.nav .perfil-link:hover {
+    background-color: rgba(255, 255, 255, 0.1); 
+    cursor: pointer;
+}
+
+/* --- CONTENEDOR INTERNO (ALINEACIÓN VERTICAL) --- */
+.user-avatar-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0; 
+    padding: 0;
+    text-align: center;
+}
+
+/* --- ESTILOS DEL AVATAR (Ajuste menor) --- */
+.user-avatar-container .user-avatar {
+    
+    width: 35px !important; 
+    height: 35px !important; 
+    border-radius: 50%; 
+    object-fit: cover; 
+    border: 2px solid var(--color-primary); 
+    
+    /* Mantenemos un margen pequeño para separar el avatar del nombre */
+    margin-bottom: 2px; 
 }

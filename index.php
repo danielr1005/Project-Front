@@ -75,13 +75,19 @@ $categorias_result = $conn->query($categorias_query);
                 <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
-                    <a href="perfil.php">Perfil</a>
                     <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
-                    <span class="user-name">Hola, <?php echo htmlspecialchars($user['nombre']); ?></span>
+                    <a href="perfil.php" class="perfil-link">
+                    <div class="user-avatar-container">
+                        <img src="<?php echo getUserAvatarUrl($user['id']); ?>" 
+                             alt="Avatar de <?php echo htmlspecialchars($user['nombre']); ?>" 
+                            class="user-avatar">
+                        <span class="user-name-footer"><?php echo htmlspecialchars($user['nombre']); ?></span>
+                    </div>
+                    </a>
                 </nav>
             </div>
         </div>
