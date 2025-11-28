@@ -77,26 +77,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             // Manejar nueva imagen si se subió
             if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
-                $upload_dir = 'uploads/';
-                if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
-                }
-                
-                $file_extension = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
-                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif'];
-                
-                if (in_array($file_extension, $allowed_extensions)) {
-                    $target_file = $upload_dir . 'img_' . $producto_id . '.jpg';
-                    
-                    if (move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file)) {
-                        // Actualizar producto para indicar que tiene imagen
-                        $update_stmt = $conn->prepare("UPDATE productos SET con_imagen = 1 WHERE id = ?");
-                        $update_stmt->bind_param("i", $producto_id);
-                        $update_stmt->execute();
-                        $update_stmt->close();
-                    }
-                }
-            }
+
+    $allowed = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif'];
+    $mime = mime_content_type($_FILES['imagen']['tmp_name']);
+
+    if (in_array($mime, $allowed)) {
+
+        $imgData = file_get_contents($_FILES['imagen']['tmp_name']);
+
+        $stmt_img = $conn->prepare("UPDATE productos SET imagen = ?, imagen_tipo = ? WHERE id = ?");
+        $stmt_img->bind_param("ssi", $imgData, $mime, $producto_id);
+        $stmt_img->send_long_data(0, $imgData);
+        $stmt_img->execute();
+        $stmt_img->close();
+    }
+}
+  
             
             $success = 'Producto actualizado exitosamente';
             $producto = array_merge($producto, [
@@ -143,7 +139,6 @@ $conn->close();
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
                 </nav>
             </div>
         </div>
@@ -240,11 +235,11 @@ $conn->close();
                     
                     <div class="form-group">
                         <label for="imagen">Nueva Imagen del Producto (opcional)</label>
-                        <?php if ($producto['con_imagen']): ?>
-                            <p>Imagen actual: <img src="uploads/img_<?php echo $producto_id; ?>.jpg" 
-                                   alt="Imagen actual" style="max-width: 200px; height: auto;" 
-                                   onerror="this.style.display='none'"></p>
-                        <?php endif; ?>
+                        <<?php if (!empty($producto['imagen'])): ?>
+                        <p>Imagen actual:</p>
+                    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+                    style="max-width: 200px; height: auto;">
+                    <?php endif; ?>
                         <input type="file" id="imagen" name="imagen" accept="image/jpeg,image/jpg,image/png,image/gif">
                         <small>Formatos aceptados: JPG, PNG, GIF. Deja vacío para mantener la imagen actual.</small>
                     </div>

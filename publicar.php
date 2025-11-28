@@ -61,28 +61,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             $producto_id = $conn->insert_id;
             
-            // Manejar imagen si se subió
-            if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
-                $upload_dir = 'uploads/';
-                if (!is_dir($upload_dir)) {
-                    mkdir($upload_dir, 0777, true);
-                }
-                
-                $file_extension = strtolower(pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION));
-                $allowed_extensions = ['jpg', 'jpeg', 'png', 'gif', 'avif' , 'webp'];
-                
-                if (in_array($file_extension, $allowed_extensions)) {
-                    $target_file = $upload_dir . 'img_' . $producto_id . '.' . $file_extension;
-                    
-                    if (move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file)) {
-                        // Actualizar producto para indicar que tiene imagen
-                        $update_stmt = $conn->prepare("UPDATE productos SET con_imagen = 1 WHERE id = ?");
-                        $update_stmt->bind_param("i", $producto_id);
-                        $update_stmt->execute();
-                        $update_stmt->close();
-                    }
-                }
-            }
+  if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+
+    $imagenData = file_get_contents($_FILES['imagen']['tmp_name']);
+    $imagenTipo = $_FILES['imagen']['type'];
+
+    $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/avif', 'image/webp'];
+
+    if (in_array($imagenTipo, $allowedTypes)) {
+
+        // Guardar imagen y tipo en BD
+        $stmtImg = $conn->prepare("UPDATE productos SET imagen = ?, imagen_tipo = ?, con_imagen = 1 WHERE id = ?");
+        $stmtImg->bind_param("bsi", $imagenDataNull, $imagenTipo, $producto_id);
+        $stmtImg->send_long_data(0, $imagenData);
+        $stmtImg->execute();
+        $stmtImg->close();
+    }
+}
+            
             
             $success = 'Producto publicado exitosamente';
             header('Location: producto.php?id=' . $producto_id);
@@ -127,7 +123,6 @@ $conn->close();
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
                 </nav>
             </div>
         </div>

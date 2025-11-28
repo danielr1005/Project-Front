@@ -91,7 +91,6 @@ $conn->close();
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
 
                 </nav>
             </div>
@@ -102,8 +101,11 @@ $conn->close();
         <div class="container">
             <div class="chat-container">
                 <div class="chat-header">
-                    <h2>Conversación sobre: <a href="producto.php?id=<?php echo $chat['producto_id']; ?>">
-                        <?php echo htmlspecialchars($chat['producto_nombre']); ?></a></h2>
+                    <h2>
+                    <?php echo htmlspecialchars($chat['producto_nombre']); ?> — 
+                     <?php echo htmlspecialchars($es_comprador ? $chat['vendedor_nombre'] : $chat['comprador_nombre']); ?>
+                    </h2>
+                   
                     <p>Precio: <?php echo formatPrice($chat['producto_precio']); ?></p>
                     <p>
                         <?php if ($es_comprador): ?>

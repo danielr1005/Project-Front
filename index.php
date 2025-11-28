@@ -81,7 +81,6 @@ $categorias_result = $conn->query($categorias_query);
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
                     <span class="user-name">Hola, <?php echo htmlspecialchars($user['nombre']); ?></span>
                 </nav>
             </div>
@@ -119,21 +118,19 @@ $categorias_result = $conn->query($categorias_query);
                     <?php while ($producto = $productos_result->fetch_assoc()): ?>
                         <div class="product-card">
                             <a href="producto.php?id=<?php echo $producto['id']; ?>">
-                            <?php
-                            // Buscar cualquier archivo cuyo nombre contenga el ID del producto
-                                $pattern = "uploads/*{$producto['id']}*.*";
-                                $files = glob($pattern, GLOB_BRACE);
+                           <?php if (!empty($producto['imagen'])): ?>
 
-                                // Si encuentra algo, usa la primera coincidencia
-                                if (!empty($files)) {
-                                    $imagen = $files[0];
-                                } else {
-                                    $imagen = "images/placeholder.jpg";
-                                }
-                            ?>
-                            <img src="<?php echo $imagen; ?>"
-                                alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-                                class="product-image">
+    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
+         class="product-image">
+
+<?php else: ?>
+
+    <img src="images/placeholder.jpg"
+         alt="Sin imagen"
+         class="product-image">
+
+<?php endif; ?>
                                 <div class="product-info">
                                     <h3 class="product-name"><?php echo htmlspecialchars($producto['nombre']); ?></h3>
                                     <p class="product-price"><?php echo formatPrice($producto['precio']); ?></p>

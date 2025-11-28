@@ -147,6 +147,8 @@ body {
     cursor: pointer;
     font-size: 1rem;
     transition: background-color 0.3s;
+    transform: translateY(-5px); 
+   
 }
 
 .theme-toggle:hover {
@@ -802,13 +804,16 @@ font-weight: 600; /* Asumiendo que esta es la negrita del modo claro */
 
 .message-sent {
     align-self: flex-end;
+     margin-left: auto;
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-secondary) 100%);
     color: var(--color-white);
     border-bottom-right-radius: 4px;
+
 }
 
 .message-received {
     align-self: flex-start;
+    margin-right: auto;
     background-color: var(--color-bg);
     color: var(--color-text);
     border: 1px solid var(--border-color);

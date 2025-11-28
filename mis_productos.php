@@ -76,7 +76,6 @@ $conn->close();
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="perfil.php">Perfil</a>
-                    <button id="themeToggle" class="theme-toggle" title="Cambiar tema">🌓</button>
                 </nav>
             </div>
         </div>
@@ -102,21 +101,22 @@ $conn->close();
                     <?php while ($producto = $productos_result->fetch_assoc()): ?>
                         <div class="product-card">
                             <a href="producto.php?id=<?php echo $producto['id']; ?>">
-<?php
-// Buscar imágenes que contengan el ID del producto en su nombre
-$pattern = "uploads/*" . $producto['id'] . "*.*";
-$files = glob($pattern, GLOB_BRACE);
 
-if (!empty($files)) {
-    $imagen = $files[0];
-} else {
-    $imagen = "images/placeholder.jpg";
-}
-?>
+<?php if (!empty($producto['imagen'])): ?>
 
-<img src="<?php echo $imagen; ?>" 
-     alt="<?php echo htmlspecialchars($producto['nombre']); ?>" 
-     class="product-image">
+    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
+         class="product-image">
+
+<?php else: ?>
+
+    <img src="images/placeholder.jpg"
+         alt="Sin imagen"
+         class="product-image">
+
+<?php endif; ?>
+
+
 
                                 <div class="product-info">
                                     <h3 class="product-name"><?php echo htmlspecialchars($producto['nombre']); ?></h3>

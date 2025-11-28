@@ -102,6 +102,9 @@ $conn->close();
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <?php
+    $current_page = basename($_SERVER['PHP_SELF']);
+    ?>
     <header class="header">
         <div class="container">
             <div class="header-content">
@@ -112,17 +115,22 @@ $conn->close();
                 </a>
                 </h1>
                 <nav class="nav">
-                    <a href="mis_productos.php">Mis Productos</a>
-                    <a href="publicar.php">Publicar Producto</a>
-                    <a href="perfil.php">Perfil</a>
-
+                    <a href="index.php" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">Menu Principal</a>
+                    
+                    <a href="mis_productos.php" class="<?= $current_page == 'mis_productos.php' ? 'active' : '' ?>">
+                        Mis Productos
+                    </a>
+                    <a href="publicar.php" class="<?= $current_page == 'publicar.php' ? 'active' : '' ?>">
+                        Publicar Producto
+                    </a>
+                    <a href="perfil.php" class="<?= $current_page == 'perfil.php' ? 'active' : '' ?>">
+                        Perfil
+                    </a>
                     <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
-                
                 </nav>
             </div>
         </div>
@@ -136,7 +144,13 @@ $conn->close();
                         <li><a href="#" data-section="perfil" class="<?php echo $active_section === 'perfil' ? 'active' : ''; ?>">Información Personal</a></li>
                         <li><a href="#" data-section="configuracion" class="<?php echo $active_section === 'configuracion' ? 'active' : ''; ?>">Configuración</a></li>
                         <li><a href="#" data-section="seguridad" class="<?php echo $active_section === 'seguridad' ? 'active' : ''; ?>">Seguridad</a></li>
-                        <li><a href="logout.php">Cerrar Sesión</a></li>
+                        
+                        <a href="logout.php" onclick="return confirmarLogout();">Cerrar sesión</a>
+                        <script>
+                            function confirmarLogout() {
+                                return confirm("¿Estás seguro de que deseas cerrar sesión?");
+                            }
+                        </script></li>   
                     </ul>
                 </div>
                 
@@ -192,8 +206,19 @@ $conn->close();
                             <input type="hidden" name="section" value="configuracion">
                             
                             <div class="settings-group">
+                                <h3>Apariencia</h3>
+                                <div class="toggle-switch">
+                                    <label for="apariencia">Modo oscuro</label>
+                                    <label class="switch">
+                                        <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
+                                    </label>
+                                </div>
+                                <small>Acivar modo oscuro en toda la aplicacion</small>
+                            </div>
+
+
+                            <div class="settings-group">
                                 <h3>Notificaciones</h3>
-                                
                                 <div class="toggle-switch">
                                     <label for="notifica_correo">Notificaciones por Correo</label>
                                     <label class="switch">

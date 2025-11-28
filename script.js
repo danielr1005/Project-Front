@@ -75,8 +75,7 @@ function addMessageToChat(message, container) {
     
     const messageDiv = document.createElement('div');
     messageDiv.id = `message-${message.id}`;
-    messageDiv.className = `message ${message.es_comprador == 1 ? 'message-sent' : 'message-received'}`;
-    
+    messageDiv.className = `message ${message.es_mio == 1 ? 'message-sent' : 'message-received'}`;    
     const messageText = document.createElement('p');
     // Convertir saltos de línea a <br>
     messageText.innerHTML = message.mensaje.replace(/\n/g, '<br>');
@@ -508,7 +507,7 @@ function addMessageToModal(message, container) {
     
     const messageDiv = document.createElement('div');
     messageDiv.id = `modal-message-${message.id}`;
-    messageDiv.className = `message ${message.es_comprador == 1 ? 'message-sent' : 'message-received'}`;
+    messageDiv.className = `message ${message.es_mio == 1 ? 'message-sent' : 'message-received'}`;
     
     const messageText = document.createElement('p');
     messageText.innerHTML = message.mensaje.replace(/\n/g, '<br>');

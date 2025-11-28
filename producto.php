@@ -85,7 +85,6 @@ $conn->close();
                         <span class="notification-count hidden" id="notificationCount">0</span>
                         <div class="chats-list" id="chatsList"></div>
                     </div>
-                    <button class="theme-toggle" id="themeToggle" title="Cambiar tema">🌓</button>
                     <a href="index.php">Volver</a>
                 </nav>
             </div>
@@ -95,24 +94,23 @@ $conn->close();
     <main class="main">
         <div class="container">
             <div class="product-detail">
-                <div class="product-image-section">
-<?php
-$pattern = "uploads/img_" . $producto['id'] . ".*";
-$files = glob($pattern);
+ <div class="product-image-section">
 
-if (!empty($files)) {
-    $imagen = $files[0];
-} else {
-    $imagen = "images/placeholder.jpg";
-}
-?>
+<?php if (!empty($producto['imagen'])): ?>
 
-<img src="<?php echo $imagen; ?>"
-     alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-     class="product-detail-image">
+    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
+         class="product-detail-image">
+
+<?php else: ?>
+
+    <img src="images/placeholder.jpg"
+         alt="Sin imagen"
+         class="product-detail-image">
+
+<?php endif; ?>
 
 </div>
-                
                 <div class="product-detail-info">
                     <h1 class="product-detail-title"><?php echo htmlspecialchars($producto['nombre']); ?></h1>
                     <p class="product-detail-price"><?php echo formatPrice($producto['precio']); ?></p>
