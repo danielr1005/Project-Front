@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="auth-container">
         <div class="auth-box">
             <h1 class="auth-title">
-            <img src="logo_new.png" alt="logo" class="auth-logo">Iniciar Sesión
+        Iniciar Sesión
             </h1>
             <?php if ($error): ?>
                 <div class="error-message"><?php echo $error; ?></div>

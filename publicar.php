@@ -115,6 +115,7 @@ $conn->close();
       Tu Mercado SENA
   </a>
 </h1>                <nav class="nav">
+               <a href="index.php" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">Menu Principal</a>
                     <a href="mis_productos.php">Mis Productos</a>
                                      <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>

@@ -801,6 +801,7 @@ font-weight: 600; /* Asumiendo que esta es la negrita del modo claro */
 
 .message {
     max-width: 70%;
+    margin-bottom: 1rem; 
     padding: 1rem 1.25rem;
     border-radius: 12px;
     word-wrap: break-word;
@@ -1479,4 +1480,27 @@ input:checked + .slider:before {
     
     /* Mantenemos un margen pequeño para separar el avatar del nombre */
     margin-bottom: 2px; 
+}
+.profile-avatar {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.profile-avatar img {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #d1d1d1;
+}
+
+.profile-avatar span {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+    font-size: 18px;
+}
+#estado_id {
+    width: 180px;
+    display: inline-block;
 }

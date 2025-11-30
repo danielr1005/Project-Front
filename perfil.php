@@ -164,6 +164,11 @@ $conn->close();
                     <div id="perfil" class="settings-section <?php echo $active_section === 'perfil' ? 'active' : ''; ?>">
                         <h2>Información Personal</h2>
                         <form method="POST" action="perfil.php" class="profile-form">
+                            <div class="profile-avatar">
+                    <img src="assests/images/defa.jpg" alt="Avatar">
+                    <span><?php echo htmlspecialchars($user['nombre']); ?></span>
+                    
+                    </div>
                             <input type="hidden" name="section" value="perfil">
                             
                             <div class="settings-group">

@@ -138,7 +138,14 @@ $conn->close();
 </h1>                <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
                     <a href="publicar.php">Publicar Producto</a>
-                    <a href="perfil.php">Perfil</a>
+                   <a href="perfil.php" class="perfil-link">
+                    <div class="user-avatar-container">
+                        <img src="<?php echo getUserAvatarUrl($user['id']); ?>" 
+                             alt="Avatar de <?php echo htmlspecialchars($user['nombre']); ?>" 
+                            class="user-avatar">
+                        <span class="user-name-footer"><?php echo htmlspecialchars($user['nombre']); ?></span>
+                    </div>
+                    </a>
                 </nav>
             </div>
         </div>
@@ -204,38 +211,38 @@ $conn->close();
                         </select>
                     </div>
                     
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="integridad_id">Condición *</label>
-                            <select id="integridad_id" name="integridad_id" required>
-                                <?php 
-                                $integridad_result->data_seek(0);
-                                while ($int = $integridad_result->fetch_assoc()): ?>
-                                    <option value="<?php echo $int['id']; ?>" 
-                                            <?php echo $producto['integridad_id'] == $int['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($int['nombre']); ?> - 
-                                        <?php echo htmlspecialchars($int['descripcion']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="estado_id">Estado *</label>
-                            <select id="estado_id" name="estado_id" required>
-                                <?php while ($estado = $estados_result->fetch_assoc()): ?>
-                                    <option value="<?php echo $estado['id']; ?>" 
-                                            <?php echo $producto['estado_id'] == $estado['id'] ? 'selected' : ''; ?>>
-                                        <?php echo htmlspecialchars($estado['nombre']); ?>
-                                    </option>
-                                <?php endwhile; ?>
-                            </select>
-                        </div>
-                    </div>
+                   <div class="form-group">
+    <label for="integridad_id">Condición *</label>
+    <select id="integridad_id" name="integridad_id" required>
+        <?php 
+        $integridad_result->data_seek(0);
+        while ($int = $integridad_result->fetch_assoc()): ?>
+            <option value="<?php echo $int['id']; ?>" 
+                    <?php echo $producto['integridad_id'] == $int['id'] ? 'selected' : ''; ?>>
+                <?php echo htmlspecialchars($int['nombre']); ?> - 
+                <?php echo htmlspecialchars($int['descripcion']); ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
+</div>
+
+<!-- Estado (Debajo de Condición) -->
+<div class="form-group">
+    <label for="estado_id">Estado *</label>
+    <select id="estado_id" name="estado_id" required>
+        <?php while ($estado = $estados_result->fetch_assoc()): ?>
+            <option value="<?php echo $estado['id']; ?>" 
+                    <?php echo $producto['estado_id'] == $estado['id'] ? 'selected' : ''; ?>>
+                <?php echo htmlspecialchars($estado['nombre']); ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
+</div>
+
                     
                     <div class="form-group">
                         <label for="imagen">Nueva Imagen del Producto (opcional)</label>
-                        <<?php if (!empty($producto['imagen'])): ?>
+                        <?php if (!empty($producto['imagen'])): ?>
                         <p>Imagen actual:</p>
                     <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
                     style="max-width: 200px; height: auto;">
@@ -245,7 +252,7 @@ $conn->close();
                     </div>
                     
                     <button type="submit" class="btn-primary">Guardar Cambios</button>
-                    <a href="mis_productos.php" class="btn-secondary">Cancelar</a>
+                    <a href="index.php" class="btn-secondary">Cancelar</a>
                 </form>
             </div>
         </div>
