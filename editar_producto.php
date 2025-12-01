@@ -137,6 +137,7 @@ $conn->close();
   </a>
 </h1>                <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
+                    <a href="favoritos.php">Favoritos</a>
                     <a href="publicar.php">Publicar Producto</a>
                    <a href="perfil.php" class="perfil-link">
                     <div class="user-avatar-container">

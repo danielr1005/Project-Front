@@ -75,6 +75,8 @@ $conn->close();
                 <nav class="nav">
                     <a href="index.php" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">Menu Principal</a>
                     <a href="publicar.php">Publicar Producto</a>
+                    <a href="favoritos.php">Favoritos</a>
+
                     <a href="perfil.php" class="perfil-link">
                          <div class="user-avatar-container">
                          <img src="<?php echo getUserAvatarUrl($user['id']); ?>" 

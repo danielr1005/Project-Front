@@ -1,21 +1,34 @@
 <?php
 require_once 'config.php';
 
+// Redirigir si no está logueado
 if (!isLoggedIn()) {
     header('Location: login.php');
     exit;
 }
 
+// Obtener datos del usuario (refresca los datos de la sesión)
 $user = getCurrentUser();
 $error = '';
 $success = '';
+
+// Definir la sección activa, usando 'perfil' por defecto
 $active_section = isset($_GET['section']) ? $_GET['section'] : 'perfil';
+
+// Manejar mensajes de éxito después de redirecciones (ej. subida de avatar)
+if (isset($_GET['status']) && $_GET['status'] === 'avatar_success') {
+    $success = 'Avatar actualizado correctamente';
+}
 
 $conn = getDBConnection();
 
+$section = $_GET['section'] ?? 'perfil';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $section = $_POST['section'] ?? 'perfil';
+    $section = $_POST['section'] ?? 'section';
     
+    // ====================================================================
+    // 1. LÓGICA DE ACTUALIZACIÓN DE PERFIL (Nombre, Descripción, Link)
+    // ====================================================================
     if ($section === 'perfil') {
         $nombre = sanitize($_POST['nombre'] ?? '');
         $descripcion = sanitize($_POST['descripcion'] ?? '');
@@ -27,6 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             
             if ($stmt->execute()) {
                 $success = 'Perfil actualizado correctamente';
+                // Actualizar sesión y datos del usuario
                 $_SESSION['usuario_nombre'] = $nombre;
                 $user = getCurrentUser();
             } else {
@@ -37,29 +51,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $error = 'El nombre es obligatorio';
         }
-    } elseif ($section === 'configuracion') {
-        $notifica_correo = isset($_POST['notifica_correo']) ? 1 : 0;
-        $notifica_push = isset($_POST['notifica_push']) ? 1 : 0;
-        $uso_datos = isset($_POST['uso_datos']) ? 1 : 0;
-        
-        $stmt = $conn->prepare("UPDATE usuarios SET notifica_correo = ?, notifica_push = ?, uso_datos = ? WHERE id = ?");
-        $stmt->bind_param("iiii", $notifica_correo, $notifica_push, $uso_datos, $user['id']);
-        
-        if ($stmt->execute()) {
-            $success = 'Configuración actualizada correctamente';
-            $user = getCurrentUser();
+
+    // ====================================================================
+    // 2. LÓGICA DE SUBIDA DE AVATAR (NUEVO BLOQUE CLAVE)
+    // ====================================================================
+  } elseif ($section === 'avatar' && isset($_FILES['avatar_file'])) {
+    $file = $_FILES['avatar_file'];
+
+    if ($file['error'] === UPLOAD_ERR_OK) {
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
+        $maxSize = 2 * 1024 * 1024; // 2MB
+
+        if (in_array($file['type'], $allowedTypes) && $file['size'] <= $maxSize) {
+            $avatar_data = file_get_contents($file['tmp_name']);
+            $avatar_tipo = $file['type'];
+
+            // Preparar consulta
+            $stmtA = $conn->prepare("UPDATE usuarios SET avatar = ?, avatar_tipo = ? WHERE id = ?");
+            $null = NULL;
+            $stmtA->bind_param("sbi", $null, $avatar_tipo, $user['id']);
+
+            // Enviar datos binarios
+            $stmtA->send_long_data(0, $avatar_data);
+
+            if ($stmtA->execute()) {
+                header('Location: perfil.php?section=perfil&status=avatar_success'); 
+                exit;
+            } else {
+                $error = 'Error de base de datos al subir el avatar: ' . $conn->error;
+            }
+            $stmtA->close();
         } else {
-            $error = 'Error al actualizar la configuración';
+            $error = 'El avatar debe ser JPEG, PNG o GIF y no exceder 2MB.';
         }
-        
-        $stmt->close();
+    } elseif ($file['error'] !== UPLOAD_ERR_NO_FILE) {
+        $error = 'Error al subir el archivo: Código ' . $file['error'];
+    }
+}
+    // ====================================================================
+    // 4. LÓGICA DE SEGURIDAD
+    // ====================================================================
     } elseif ($section === 'seguridad') {
         $password_actual = $_POST['password_actual'] ?? '';
         $password_nueva = $_POST['password_nueva'] ?? '';
         $password_confirm = $_POST['password_confirm'] ?? '';
         
         if (!empty($password_actual) && !empty($password_nueva)) {
-            // Verificar contraseña actual
+            // ... (Lógica de cambio de contraseña existente) ...
             if (password_verify($password_actual, $user['password'])) {
                 if ($password_nueva === $password_confirm) {
                     if (strlen($password_nueva) >= 6) {
@@ -72,7 +110,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         } else {
                             $error = 'Error al actualizar la contraseña';
                         }
-                        
                         $stmt->close();
                     } else {
                         $error = 'La nueva contraseña debe tener al menos 6 caracteres';
@@ -89,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     $active_section = $section;
-}
+
 
 $conn->close();
 ?>
@@ -115,11 +152,13 @@ $conn->close();
                 </a>
                 </h1>
                 <nav class="nav">
+
                     <a href="index.php" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">Menu Principal</a>
                     
                     <a href="mis_productos.php" class="<?= $current_page == 'mis_productos.php' ? 'active' : '' ?>">
                         Mis Productos
                     </a>
+                    <a href="favoritos.php">Favoritos</a>
                     <a href="publicar.php" class="<?= $current_page == 'publicar.php' ? 'active' : '' ?>">
                         Publicar Producto
                     </a>
@@ -147,7 +186,7 @@ $conn->close();
                             function confirmarLogout() {
                                 return confirm("¿Estás seguro de que deseas cerrar sesión?");
                             }
-                        </script></li>   
+                        </script></li>  
                     </ul>
                 </div>
                 
@@ -160,15 +199,54 @@ $conn->close();
                         <div class="success-message"><?php echo $success; ?></div>
                     <?php endif; ?>
                     
-                    <!-- Sección: Información Personal -->
                     <div id="perfil" class="settings-section <?php echo $active_section === 'perfil' ? 'active' : ''; ?>">
                         <h2>Información Personal</h2>
-                        <form method="POST" action="perfil.php" class="profile-form">
-                            <div class="profile-avatar">
-                    <img src="assests/images/defa.jpg" alt="Avatar">
-                    <span><?php echo htmlspecialchars($user['nombre']); ?></span>
-                    
-                    </div>
+                        
+                    <form method="POST" action="perfil.php" id="avatarUploadForm" enctype="multipart/form-data" style="display:none;">
+    <input type="hidden" name="section" value="avatar">
+    <input type="file" id="avatarInputHidden" name="avatar_file" accept="image/*">
+    <button type="submit" id="avatarSubmitBtn">Subir Avatar</button>
+</form>
+<div class="profile-avatar-wrapper">
+    <img id="avatarPhoto" src="<?php echo getUserAvatarUrl($user['id']); ?>" class="avatar-photo" alt="Avatar">
+
+    <!-- Formulario de subida de avatar -->
+    <form method="POST" action="perfil.php" id="avatarUploadForm" enctype="multipart/form-data">
+        <input type="hidden" name="section" value="avatar">
+        <input type="file" id="avatarInputHidden" name="avatar_file" accept="image/*" style="display:none;">
+    </form>
+
+    <!-- Botón lápiz -->
+    <button id="avatarEditButton" class="avatar-edit-btn" title="Cambiar foto de perfil">
+        <img src="assests/icons/icono-lapiz.png" alt="Editar">
+    </button>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const avatarEditBtn = document.getElementById('avatarEditButton');
+    const avatarInput = document.getElementById('avatarInputHidden');
+    const avatarForm = document.getElementById('avatarUploadForm');
+    const avatarPhoto = document.getElementById('avatarPhoto');
+
+    // Abrir selector de archivos al hacer clic en el lápiz
+    avatarEditBtn.addEventListener('click', () => {
+        avatarInput.click();
+    });
+
+    // Previsualizar imagen y enviar formulario al seleccionar archivo
+    avatarInput.addEventListener('change', () => {
+        if (avatarInput.files && avatarInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                avatarPhoto.src = e.target.result; // Previsualización
+            };
+            reader.readAsDataURL(avatarInput.files[0]);
+
+            avatarForm.submit(); // Enviar al backend
+        }
+    });
+});
+</script>
                             <input type="hidden" name="section" value="perfil">
                             
                             <div class="settings-group">
@@ -201,7 +279,6 @@ $conn->close();
                         </form>
                     </div>
                     
-                    <!-- Sección: Configuración -->
                     <div id="configuracion" class="settings-section <?php echo $active_section === 'configuracion' ? 'active' : ''; ?>">
                         <h2>Configuración del Marketplace</h2>
                         <form method="POST" action="perfil.php" class="profile-form">
@@ -260,7 +337,6 @@ $conn->close();
                         </form>
                     </div>
                     
-                    <!-- Sección: Seguridad -->
                     <div id="seguridad" class="settings-section <?php echo $active_section === 'seguridad' ? 'active' : ''; ?>">
                         <h2>Seguridad</h2>
                         <form method="POST" action="perfil.php" class="profile-form">

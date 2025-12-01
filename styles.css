@@ -1458,29 +1458,90 @@ input:checked + .slider:before {
     cursor: pointer;
 }
 
-/* --- CONTENEDOR INTERNO (ALINEACIÓN VERTICAL) --- */
-.user-avatar-container{
+/* ------------------- RESPONSIVE ------------------- */
+@media (max-width: 768px) {
+    .product-detail,
+    .form-row,
+    .products-grid,
+    .settings-container {
+        grid-template-columns: 1fr;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .nav {
+        width: 100%;
+        margin-top: 1rem;
+    }
+
+    .filters-form {
+        display: flex;
+        gap: 0.8rem; 
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .filter-group,
+    .message {
+        width: 100%;
+    }
+
+    .settings-sidebar {
+        position: relative;
+        top: 0;
+    }
+
+    .chat-modal-content {
+        max-width: 100%;
+        max-height: 100vh;
+        border-radius: 0;
+    }
+
+    .chats-list,
+    .browser-notification {
+        min-width: 250px;
+        max-width: 300px;
+    }
+}
+
+/* ------------------- NAV PERFIL ------------------- */
+.nav .perfil-link {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 20px;
+    transition: background-color 0.2s;
+    margin-left: 0;
+    color: inherit;
+    text-decoration: none !important;
+}
+.nav .perfil-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    cursor: pointer;
+}
+
+/* ------------------- AVATAR ------------------- */
+.user-avatar-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin: 0; 
+    margin: 0;
     padding: 0;
     text-align: center;
 }
 
-/* --- ESTILOS DEL AVATAR (Ajuste menor) --- */
 .user-avatar-container .user-avatar {
-    
-    width: 35px !important; 
-    height: 35px !important; 
-    border-radius: 50%; 
-    object-fit: cover; 
-    border: 2px solid var(--color-primary); 
-    
-    /* Mantenemos un margen pequeño para separar el avatar del nombre */
-    margin-bottom: 2px; 
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--color-primary);
+    margin-bottom: 2px;
 }
+
 .profile-avatar {
     text-align: center;
     margin: 20px 0;
@@ -1500,7 +1561,248 @@ input:checked + .slider:before {
     font-weight: bold;
     font-size: 18px;
 }
+
 #estado_id {
     width: 180px;
     display: inline-block;
+}
+
+/* ------------------- AVATAR CON LÁPIZ ------------------- */
+.profile-avatar-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px auto;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.profile-avatar-wrapper img#avatarPhoto {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    border: 3px solid var(--color-accent);
+}
+
+/* Botón lápiz */
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 42px;
+    height: 42px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: var(--shadow);
+    border: 3px solid var(--color-bg); /* Contrasta con el avatar */
+    transition: transform 0.15s ease, background-color 0.2s ease;
+}
+
+.avatar-edit-btn:hover {
+    transform: scale(1.2);
+    background-color: var(--color-secondary);
+}
+
+.avatar-edit-btn img {
+    width: 60%;
+    height: 60%;
+    filter: invert(1); /* icono blanco para contrastar */
+}
+
+/* Input file oculto */
+#avatarInputHidden {
+    display: none;
+}
+
+/* ------------------- RESPONSIVE AVATAR ------------------- */
+@media (max-width: 768px) {
+    .profile-avatar-wrapper {
+        width: 120px;
+        height: 120px;
+    }
+    .avatar-edit-btn {
+        width: 36px;
+        height: 36px;
+    }
+    .avatar-edit-btn img {
+        width: 60%;
+        height: 60%;
+    }
+}
+
+/* ------------------- ENCABEZADO PERFIL ------------------- */
+.profile-header-info {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding: 10px 0;
+}
+
+.profile-avatar-display {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    flex-shrink: 0;
+}
+
+.avatar-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-accent);
+}
+
+.avatar-edit-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border: 3px solid var(--color-bg);
+    box-shadow: var(--shadow);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.avatar-edit-icon:hover {
+    filter: brightness(1.2);
+}
+
+.avatar-edit-icon img {
+    width: 16px;
+    height: 16px;
+    filter: invert(1);
+}
+
+.profile-name-edit {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.profile-name-edit span {
+    font-size: 1.8em;
+    font-weight: 700;
+    color: var(--color-text);
+    line-height: 1.2;
+}
+
+.profile-avatar-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+}
+
+.avatar-photo {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--color-primary);
+}
+
+.avatar-edit-btn {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    width: 40px;
+    height: 40px;
+    background-color: var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    border: 3px solid var(--color-bg);
+}
+
+.avatar-edit-btn img {
+    width: 60%;
+    height: 60%;
+    filter: invert(1);
+}
+
+.avatar-edit-btn:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s;
+}
+.btn-favorite {
+    /* Estilos base */
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    white-space: nowrap; /* Evita que el texto se rompa */
+    
+    /* Estado Inactivo (🤍 Añadir a Favoritos) */
+    background-color: var(--color-card-bg, #fff); /* Fondo claro */
+    color: var(--color-primary, #004d40); /* Texto de color primario */
+    border: 1px solid var(--color-primary, #004d40);
+    text-decoration: none; /* ❌ Aquí quitamos la raya del enlace */
+}
+
+.btn-favorite:hover {
+    background-color: var(--color-primary-light, #e0f2f1); /* Un hover suave */
+    text-decoration: none; /* ❌ También aquí */
+}
+
+.btn-favorite.active {
+    /* Estado Activo (❤️ Favorito) */
+    background-color: #e74c3c; /* Rojo de corazón/peligro */
+    color: white;
+    border: 1px solid #c0392b;
+    text-decoration: none; /* ❌ Ya lo tenías */
+}
+
+.btn-favorite.active:hover {
+    background-color: #c0392b;
+    text-decoration: none; /* ❌ También aquí */
+}
+
+.favoritos .product-grid{
+display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+/* Solo para la página de favoritos */
+.favoritos-grid .product-card {
+    max-width: 300px; /* Ajusta según quieras */
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.favoritos-grid .product-card .product-image {
+    width: 100%;
+    height: 200px; /* Igual que index.php para uniformidad */
+    object-fit: cover; /* Mantiene proporción y recorta si es necesario */
+    border-radius: 8px 8px 0 0;
+}
+
+.favoritos-grid .product-info {
+    padding: 10px;
 }

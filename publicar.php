@@ -117,6 +117,7 @@ $conn->close();
 </h1>                <nav class="nav">
                <a href="index.php" class="<?= $current_page == 'index.php' ? 'active' : '' ?>">Menu Principal</a>
                     <a href="mis_productos.php">Mis Productos</a>
+                    <a href="favoritos.php">Favoritos</a>
                                      <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>
                         <span class="notification-count hidden" id="notificationCount">0</span>

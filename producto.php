@@ -14,19 +14,19 @@ if (!isset($_GET['id'])) {
 }
 
 $producto_id = (int)$_GET['id'];
-$conn = getDBConnection();
+$conn = getDBConnection(); // 👈 Conexión abierta al inicio
 $user = getCurrentUser();
 
 // Obtener información del producto
 $stmt = $conn->prepare("SELECT p.*, u.nombre as vendedor_nombre, u.id as vendedor_id, u.descripcion as vendedor_desc,
-                       sc.nombre as subcategoria_nombre, c.nombre as categoria_nombre, 
-                       i.nombre as integridad_nombre, i.descripcion as integridad_desc
-                       FROM productos p
-                       INNER JOIN usuarios u ON p.vendedor_id = u.id
-                       INNER JOIN subcategorias sc ON p.subcategoria_id = sc.id
-                       INNER JOIN categorias c ON sc.categoria_id = c.id
-                       INNER JOIN integridad i ON p.integridad_id = i.id
-                       WHERE p.id = ? AND p.estado_id = 1");
+                        sc.nombre as subcategoria_nombre, c.nombre as categoria_nombre, 
+                        i.nombre as integridad_nombre, i.descripcion as integridad_desc
+                        FROM productos p
+                        INNER JOIN usuarios u ON p.vendedor_id = u.id
+                        INNER JOIN subcategorias sc ON p.subcategoria_id = sc.id
+                        INNER JOIN categorias c ON sc.categoria_id = c.id
+                        INNER JOIN integridad i ON p.integridad_id = i.id
+                        WHERE p.id = ? AND p.estado_id = 1");
 $stmt->bind_param("i", $producto_id);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -34,6 +34,8 @@ $producto = $result->fetch_assoc();
 $stmt->close();
 
 if (!$producto) {
+    // Si no hay producto, CERRAR CONEXIÓN Y SALIR
+    $conn->close();
     header('Location: index.php');
     exit;
 }
@@ -57,7 +59,15 @@ if ($user && $user['id'] != $producto['vendedor_id']) {
     $stmt->close();
 }
 
-$conn->close();
+// 💥 LÓGICA DE FAVORITOS (se ejecuta aquí, usando la conexión abierta) 💥
+$isFavorite = false;
+if ($user) {
+    // isProductFavorite() debe manejar internamente la conexión (volver a abrir si $conn no es global o usarla si lo es)
+    $isFavorite = isProductFavorite($user['id'], $producto_id); 
+}
+
+// Cerramos la conexión al final de toda la lógica de BD
+$conn->close(); 
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -66,18 +76,20 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($producto['nombre']); ?> - Tu Mercado SENA</title>
     <link rel="stylesheet" href="styles.css">
-</head>
+    </head>
 <body>
     <header class="header">
         <div class="container">
             <div class="header-content">
-<h1 class="logo">
-  <a href="index.php">
-      <img src="logo_new.png"  class="logo-img">
-      Tu Mercado SENA
-  </a>
-</h1>                <nav class="nav">
+                <h1 class="logo">
+                    <a href="index.php">
+                        <img src="logo_new.png" class="logo-img">
+                        Tu Mercado SENA
+                    </a>
+                </h1> 
+                <nav class="nav">
                     <a href="mis_productos.php">Mis Productos</a>
+                    <a href="favoritos.php">Favoritos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <a href="index.php">Volver</a>
                     <div class="notification-badge">
@@ -86,12 +98,12 @@ $conn->close();
                         <div class="chats-list" id="chatsList"></div>
                     </div>
                     <a href="perfil.php" class="perfil-link">
-                    <div class="user-avatar-container">
-                        <img src="<?php echo getUserAvatarUrl($user['id']); ?>" 
-                             alt="Avatar de <?php echo htmlspecialchars($user['nombre']); ?>" 
-                            class="user-avatar">
-                        <span class="user-name-footer"><?php echo htmlspecialchars($user['nombre']); ?></span>
-                    </div>
+                        <div class="user-avatar-container">
+                            <img src="<?php echo getUserAvatarUrl($user['id']); ?>" 
+                                alt="Avatar de <?php echo htmlspecialchars($user['nombre']); ?>" 
+                                class="user-avatar">
+                            <span class="user-name-footer"><?php echo htmlspecialchars($user['nombre']); ?></span>
+                        </div>
                     </a>
                 </nav>
             </div>
@@ -101,30 +113,26 @@ $conn->close();
     <main class="main">
         <div class="container">
             <div class="product-detail">
- <div class="product-image-section">
+                <div class="product-image-section">
 
-<?php if (!empty($producto['imagen'])): ?>
+                    <?php if (!empty($producto['imagen'])): ?>
+                        <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+                            alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
+                            class="product-detail-image">
+                    <?php else: ?>
+                        <img src="images/placeholder.jpg"
+                            alt="Sin imagen"
+                            class="product-detail-image">
+                    <?php endif; ?>
 
-    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
-         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-         class="product-detail-image">
-
-<?php else: ?>
-
-    <img src="images/placeholder.jpg"
-         alt="Sin imagen"
-         class="product-detail-image">
-
-<?php endif; ?>
-
-</div>
+                </div>
                 <div class="product-detail-info">
                     <h1 class="product-detail-title"><?php echo htmlspecialchars($producto['nombre']); ?></h1>
                     <p class="product-detail-price"><?php echo formatPrice($producto['precio']); ?></p>
                     
                     <div class="product-meta">
                         <p><strong>Categoría:</strong> <?php echo htmlspecialchars($producto['categoria_nombre']); ?> - 
-                           <?php echo htmlspecialchars($producto['subcategoria_nombre']); ?></p>
+                            <?php echo htmlspecialchars($producto['subcategoria_nombre']); ?></p>
                         <p><strong>Condición:</strong> <?php echo htmlspecialchars($producto['integridad_nombre']); ?></p>
                         <p><strong>Disponibles:</strong> <?php echo $producto['disponibles']; ?></p>
                         <p><strong>Publicado:</strong> <?php echo date('d/m/Y', strtotime($producto['fecha_registro'])); ?></p>
@@ -144,15 +152,30 @@ $conn->close();
                     </div>
                     
                     <div class="product-actions">
+                        
                         <?php if ($user['id'] == $producto['vendedor_id']): ?>
                             <a href="editar_producto.php?id=<?php echo $producto['id']; ?>" class="btn-secondary">Editar Producto</a>
-                            <a href="eliminar_producto.php?id=<?php echo $producto['id']; ?>"class="btn-secondary"onclick="return confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.');">Eliminar Producto</a>
+                            
+                            <a href="eliminar_producto.php?id=<?php echo $producto['id']; ?>" 
+                               class="btn-secondary"
+                               onclick="return confirm('¿Estás seguro de que quieres eliminar este producto? Esta acción no se puede deshacer.');">
+                               Eliminar Producto
+                            </a>
+                            
                         <?php else: ?>
+                           <?php if ($user['id'] != $producto['vendedor_id']): ?>
+    <a href="favoritos.php?producto_id=<?php echo $producto['id']; ?>&redirect=producto&id=<?php echo $producto['id']; ?>" 
+   class="btn-favorite <?php echo $isFavorite ? 'active' : ''; ?>"
+   title="<?php echo $isFavorite ? :  'Añadir a Favoritos'; ?>">
+   <?php echo $isFavorite ? '❤️ Favorito' : '❤️ Añadir a Favoritos'; ?>
+</a>
+<?php endif; ?>
                             <?php if ($chat_existente): ?>
                                 <a href="chat.php?id=<?php echo $chat_existente['id']; ?>" class="btn-primary">Ver Conversación</a>
                             <?php else: ?>
                                 <a href="contactar.php?producto_id=<?php echo $producto['id']; ?>" class="btn-primary">Contactar Vendedor</a>
                             <?php endif; ?>
+                            
                         <?php endif; ?>
                     </div>
                 </div>
@@ -168,4 +191,3 @@ $conn->close();
     <script src="script.js"></script>
 </body>
 </html>
-

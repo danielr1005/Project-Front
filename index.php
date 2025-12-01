@@ -72,8 +72,10 @@ $categorias_result = $conn->query($categorias_query);
         Tu Mercado SENA
     </a>
 </h1>
-                <nav class="nav">
+<nav class="nav">
+
                     <a href="mis_productos.php">Mis Productos</a>
+                    <a href="favoritos.php">Favoritos</a>
                     <a href="publicar.php">Publicar Producto</a>
                     <div class="notification-badge">
                         <span class="notification-icon" id="notificationIcon" title="Chats y notificaciones">💬</span>

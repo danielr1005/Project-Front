@@ -36,6 +36,29 @@ function getDBConnection() {
         die("Error de conexión: " . $e->getMessage());
     }
 }
+function getUserAvatarUrl($userId) {
+    // Asegúrate de que esta ruta sea correcta
+    $defaultAvatar = 'assests/images/avatars/defa.jpg'; 
+    
+    $conn = getDBConnection();
+    // Solo necesitamos saber si el BLOB NO está vacío
+    $stmt = $conn->prepare("SELECT id FROM usuarios WHERE id = ? AND avatar IS NOT NULL");
+    $stmt->bind_param("i", $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    if ($result->num_rows > 0) {
+        $stmt->close();
+        $conn->close();
+        // CLAVE: Devuelve la URL del script que lee la imagen desde la BD
+        return 'api/get_avatar.php?id=' . $userId; 
+    }
+
+    $stmt->close();
+    $conn->close();
+    
+    return $defaultAvatar; 
+}
 
 /**
  * Verifica si el usuario está logueado
@@ -66,6 +89,17 @@ function getCurrentUser() {
     $conn->close();
     
     return $user;
+}
+function isProductFavorite($user_id, $producto_id) {
+    $conn = getDBConnection();
+    $stmt = $conn->prepare("SELECT * FROM favoritos WHERE votante_id = ? AND votado_id = ?");
+    $stmt->bind_param("ii", $user_id, $producto_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $exists = $result->num_rows > 0;
+    $stmt->close();
+    $conn->close();
+    return $exists;
 }
 
 /**
@@ -132,21 +166,5 @@ function formato_tiempo_relativo($timestamp_db) {
  * @param int $userId El ID del usuario.
  * @return string La URL del avatar (o un placeholder).
  */
-function getUserAvatarUrl($userId) {
-    
-    // RUTA DEL AVATAR POR DEFECTO. Asegúrate de que esta ruta sea correcta y que 
-    // el archivo 'default_avatar.jpg' exista en assets/images/
-    $defaultAvatar = 'assests/images/defa.jpg'; 
-    
-    // *******************************************************************
-    // Lógica para AVATAR ESPECÍFICO (Si tu sistema lo soporta):
-    // 
-    // $customPath = 'assets/images/profiles/avatar_' . $userId . '.jpg';
-    // if (file_exists($customPath)) {
-    //     return $customPath;
-    // }
-    // *******************************************************************
-    
-    return $defaultAvatar; 
-}
+
 ?>

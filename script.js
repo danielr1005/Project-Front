@@ -719,3 +719,151 @@ function getUrlParameter(name) {
     const urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(name);
 }
+
+document.getElementById("avatarInput").addEventListener("change", function() {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        // Actualizar foto visible
+        document.getElementById("avatarPhoto").src = e.target.result;
+
+        // Actualizar foto del header
+        const headerAvatar = document.getElementById("headerAvatar");
+        if (headerAvatar) headerAvatar.src = e.target.result;
+    };
+
+    reader.readAsDataURL(file);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    // --- LÓGICA DE AVATAR PRINCIPAL ---
+  
+
+    if (avatarEditButton && avatarInputHidden && avatarUploadForm) {
+    document.addEventListener('DOMContentLoaded', () => {
+
+    const avatarEditButton = document.getElementById('avatarEditButton'); // Botón lápiz
+    const avatarInputHidden = document.getElementById('avatarInputHidden'); // Input oculto
+    const avatarUploadForm = document.getElementById('avatarUploadForm'); // Formulario
+    const avatarPhoto = document.getElementById('avatarPhoto'); // Imagen en perfil
+    const headerAvatar = document.getElementById('headerAvatar'); // Imagen en header (opcional)
+    const deleteAvatarBtn = document.getElementById('deleteAvatarBtn'); // Botón de eliminar (opcional)
+
+    if (avatarEditButton && avatarInputHidden && avatarUploadForm) {
+        // Abrir selector al hacer clic en lápiz
+        avatarEditButton.addEventListener('click', () => {
+            avatarInputHidden.click();
+        });
+
+        // Previsualizar y enviar automáticamente
+        avatarInputHidden.addEventListener('change', function() {
+            if (this.files.length > 0) {
+                const file = this.files[0];
+                const reader = new FileReader();
+
+                reader.onload = (e) => {
+                    // Actualizar avatar en perfil
+                    avatarPhoto.src = e.target.result;
+
+                    // Actualizar avatar en header si existe
+                    if (headerAvatar) headerAvatar.src = e.target.result;
+                };
+
+                reader.readAsDataURL(file);
+
+                // Enviar formulario al servidor
+                avatarUploadForm.submit();
+            }
+        });
+    }
+
+    // Lógica para eliminar avatar
+    if (deleteAvatarBtn) {
+        deleteAvatarBtn.addEventListener('click', () => {
+            if (confirm("¿Deseas eliminar tu foto de perfil?")) {
+                window.location.href = 'perfil.php?section=avatar&action=delete';
+            }
+        });
+    }
+
+});
+    }
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const avatarEditBtn = document.getElementById('avatarEditButton');
+    const avatarInput = document.getElementById('avatarInputHidden');
+    const avatarForm = document.getElementById('avatarUploadForm');
+    const avatarPhoto = document.getElementById('avatarPhoto');
+
+    // Clic en lápiz abre selector de archivos
+    avatarEditBtn.addEventListener('click', () => {
+        avatarInput.click();
+    });
+
+    // Cuando se selecciona un archivo, previsualiza y envía
+    avatarInput.addEventListener('change', () => {
+        if (avatarInput.files && avatarInput.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                avatarPhoto.src = e.target.result; // Previsualización
+            };
+            reader.readAsDataURL(avatarInput.files[0]);
+
+            // Enviar formulario automáticamente
+            avatarForm.submit();
+        }
+    });
+});
+document.addEventListener('DOMContentLoaded', () => {
+    const toggleBtn = document.getElementById('toggleFavoriteBtn');
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', async () => {
+            const productId = toggleBtn.dataset.productId;
+            const isCurrentlyFavorite = toggleBtn.dataset.isFavorite === 'true';
+
+            const data = {
+                product_id: productId,
+                is_favorite: isCurrentlyFavorite ? 'true' : 'false'
+            };
+
+            try {
+                // Envía la solicitud al nuevo archivo toggle_favorito.php
+                const response = await fetch('toggle_favorito.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const newStatus = result.is_favorite;
+                    
+                    // 1. Actualiza el atributo data-is-favorite
+                    toggleBtn.dataset.isFavorite = newStatus ? 'true' : 'false';
+
+                    // 2. Actualiza la apariencia y el texto
+                    if (newStatus) {
+                        toggleBtn.classList.add('active');
+                        toggleBtn.innerHTML = '❤️ Favorito';
+                        toggleBtn.title = 'Quitar de Favoritos';
+                    } else {
+                        toggleBtn.classList.remove('active');
+                        toggleBtn.innerHTML = '🤍 Añadir a Favoritos';
+                        toggleBtn.title = 'Añadir a Favoritos';
+                    }
+                } else {
+                    console.error('Error al actualizar favoritos:', result.message);
+                    alert('Error al actualizar favoritos.');
+                }
+
+            } catch (error) {
+                console.error('Error de conexión o servidor:', error);
+                alert('Hubo un problema al conectar con el servidor.');
+            }
+        });
+    }
+});
