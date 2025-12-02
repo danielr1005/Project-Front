@@ -40,14 +40,26 @@ if (!$producto) {
     exit;
 }
 
-// Registrar vista si hay usuario logueado
-if ($user && $user['id'] != $producto['vendedor_id']) {
-    $stmt = $conn->prepare("INSERT IGNORE INTO vistos (usuario_id, producto_id) VALUES (?, ?)");
-    $stmt->bind_param("ii", $user['id'], $producto_id);
-    $stmt->execute();
-    $stmt->close();
-}
+if (isset($_POST['agregar_favorito'])) {
+    $usuario_id = $_SESSION['id'];      // usuario logueado
+    $producto_id = $_POST['producto_id']; // id del producto
 
+    $query = "INSERT INTO favoritos (votante_id, votado_id) VALUES (?, ?)";
+    $stmt = $conn->prepare($query);
+
+    if ($stmt === false) {
+        die("Error en prepare: " . $conn->error);
+    }
+
+    $stmt->bind_param("ii", $usuario_id, $producto_id);
+
+    if ($stmt->execute()) {
+        header("Location: favoritos.php");
+        exit;
+    } else {
+        echo "Error al agregar favorito: " . $stmt->error;
+    }
+}
 // Verificar si hay chat existente
 $chat_existente = null;
 if ($user && $user['id'] != $producto['vendedor_id']) {
@@ -164,10 +176,10 @@ $conn->close();
                             
                         <?php else: ?>
                            <?php if ($user['id'] != $producto['vendedor_id']): ?>
-    <a href="favoritos.php?producto_id=<?php echo $producto['id']; ?>&redirect=producto&id=<?php echo $producto['id']; ?>" 
+<a href="favoritos.php?producto_id=<?php echo $producto['id']; ?>" 
    class="btn-favorite <?php echo $isFavorite ? 'active' : ''; ?>"
-   title="<?php echo $isFavorite ? :  'Añadir a Favoritos'; ?>">
-   <?php echo $isFavorite ? '❤️ Favorito' : '❤️ Añadir a Favoritos'; ?>
+   title="<?php echo $isFavorite ? 'Quitar de Favoritos' : 'Añadir a Favoritos'; ?>">
+   <?php echo $isFavorite ? '🤍 Favorito' : '❤️ Añadir a Favoritos'; ?>
 </a>
 <?php endif; ?>
                             <?php if ($chat_existente): ?>

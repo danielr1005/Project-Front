@@ -1806,3 +1806,9 @@ display: grid;
 .favoritos-grid .product-info {
     padding: 10px;
 }
+.user-avatar {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 50%;
+    object-fit: cover;
+}

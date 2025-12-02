@@ -32,3 +32,4 @@ $stmt->bind_param("si", $relativePath, $user_id);
 $stmt->execute();
 
 echo json_encode(['success' => true, 'avatar' => $relativePath]);
+?>

@@ -8,6 +8,6 @@ if (session_status() === PHP_SESSION_NONE) {
 unset($_SESSION['usuario_id']);
 session_destroy();
 
-header("Location: login.php");
+header("Location: welcome.php");
 exit;
 ?>

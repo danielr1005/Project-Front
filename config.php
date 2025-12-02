@@ -49,13 +49,11 @@ function getUserAvatarUrl($userId) {
     
     if ($result->num_rows > 0) {
         $stmt->close();
-        $conn->close();
         // CLAVE: Devuelve la URL del script que lee la imagen desde la BD
         return 'api/get_avatar.php?id=' . $userId; 
     }
 
     $stmt->close();
-    $conn->close();
     
     return $defaultAvatar; 
 }
@@ -86,7 +84,6 @@ function getCurrentUser() {
     $result = $stmt->get_result();
     $user = $result->fetch_assoc();
     $stmt->close();
-    $conn->close();
     
     return $user;
 }
@@ -98,8 +95,13 @@ function isProductFavorite($user_id, $producto_id) {
     $result = $stmt->get_result();
     $exists = $result->num_rows > 0;
     $stmt->close();
-    $conn->close();
     return $exists;
+}
+function forceLightTheme() {
+    echo "<script>
+        localStorage.setItem('theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
+    </script>";
 }
 
 /**

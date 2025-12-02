@@ -2,10 +2,20 @@
 
 // ==================== TEMA OSCURO/CLARO ====================
 function initTheme() {
-    const theme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', theme);
-    updateThemeIcon(theme);
+    const pagesForceLight = ['welcome.php', 'login.php', 'register.php'];
+    const currentPage = window.location.pathname.split("/").pop();
+
+    if (pagesForceLight.includes(currentPage)) {
+        localStorage.setItem('theme', 'light');
+        document.documentElement.setAttribute('data-theme', 'light');
+        return;
+    }
+
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
 }
+
+document.addEventListener('DOMContentLoaded', initTheme);
 
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme');

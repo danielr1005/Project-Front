@@ -1,5 +1,7 @@
 <?php
 require_once 'config.php';
+forceLightTheme();
+
 
 $error = '';
 $success = '';

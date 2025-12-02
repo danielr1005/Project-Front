@@ -10,3 +10,8 @@
     Deny from all
 </FilesMatch>
 
+RewriteEngine On
+
+# Evitar redirección infinita
+RewriteCond %{REQUEST_URI} ^/Project-Front/?$ [NC]
+RewriteRule ^.*$ /Project-Front/welcome.php [L,R=302]
