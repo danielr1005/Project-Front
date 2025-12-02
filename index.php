@@ -4,7 +4,7 @@ require_once 'config.php';
 
 // Redirigir a login si no está autenticado
 if (!isLoggedIn()) {
-    header('Location: login.php');
+    header('Location: welcome.php');
     exit;
 }
 
