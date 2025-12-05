@@ -127,18 +127,14 @@ $categorias_result = $conn->query($categorias_query);
                     <?php while ($producto = $productos_result->fetch_assoc()): ?>
                         <div class="product-card">
                             <a href="producto.php?id=<?php echo $producto['id']; ?>">
-                           <?php if (!empty($producto['imagen'])): ?>
-
-    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+   <?php if (!empty($producto['imagen'])): ?>
+    <img src="<?php echo htmlspecialchars($producto['imagen']); ?>"
          alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
          class="product-image">
-
 <?php else: ?>
-
     <img src="images/placeholder.jpg"
          alt="Sin imagen"
          class="product-image">
-
 <?php endif; ?>
                                 <div class="product-info">
                                     <h3 class="product-name"><?php echo htmlspecialchars($producto['nombre']); ?></h3>

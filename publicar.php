@@ -61,24 +61,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($stmt->execute()) {
             $producto_id = $conn->insert_id;
             
-  if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
 
-    $imagenData = file_get_contents($_FILES['imagen']['tmp_name']);
+    $imagenTmp = $_FILES['imagen']['tmp_name'];
     $imagenTipo = $_FILES['imagen']['type'];
-
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/avif', 'image/webp'];
 
     if (in_array($imagenTipo, $allowedTypes)) {
 
-        // Guardar imagen y tipo en BD
-        $stmtImg = $conn->prepare("UPDATE productos SET imagen = ?, imagen_tipo = ?, con_imagen = 1 WHERE id = ?");
-        $stmtImg->bind_param("bsi", $imagenDataNull, $imagenTipo, $producto_id);
-        $stmtImg->send_long_data(0, $imagenData);
-        $stmtImg->execute();
-        $stmtImg->close();
+        // Crear nombre único
+        $extension = pathinfo($_FILES['imagen']['name'], PATHINFO_EXTENSION);
+        $nombreArchivo = uniqid("img_") . "." . $extension;
+
+        // Ruta final
+        $rutaDestino = "uploads/" . $nombreArchivo;
+
+        // Mover archivo
+        if (move_uploaded_file($imagenTmp, $rutaDestino)) {
+
+            // Guardar la ruta en la BD
+            $stmtImg = $conn->prepare("UPDATE productos SET imagen = ?, con_imagen = 1 WHERE id = ?");
+            $stmtImg->bind_param("si", $rutaDestino, $producto_id);
+            $stmtImg->execute();
+            $stmtImg->close();
+        }
     }
 }
-            
             
             $success = 'Producto publicado exitosamente';
             header('Location: producto.php?id=' . $producto_id);

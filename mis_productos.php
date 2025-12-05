@@ -113,7 +113,7 @@ $conn->close();
 
 <?php if (!empty($producto['imagen'])): ?>
 
-    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+    <img src="<?php echo htmlspecialchars($producto['imagen']); ?>"
          alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
          class="product-image">
 

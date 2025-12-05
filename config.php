@@ -87,10 +87,10 @@ function getCurrentUser() {
     
     return $user;
 }
-function isProductFavorite($user_id, $producto_id) {
+function isSellerFavorite($votante_id, $vendedor_id) {
     $conn = getDBConnection();
-    $stmt = $conn->prepare("SELECT * FROM favoritos WHERE votante_id = ? AND votado_id = ?");
-    $stmt->bind_param("ii", $user_id, $producto_id);
+    $stmt = $conn->prepare("SELECT id FROM favoritos WHERE votante_id = ? AND votado_id = ?");
+    $stmt->bind_param("ii", $votante_id, $vendedor_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $exists = $result->num_rows > 0;

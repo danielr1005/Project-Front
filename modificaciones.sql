@@ -1,14 +1,11 @@
-- --------------------------------------------
+-- --------------------------------------------
 -- Archivo: modificaciones.sql
 -- Descripción: Contiene los cambios a la base de datos
 -- --------------------------------------------
 
--- 1️⃣ Tabla productos: agregar columnas para imagen y tipo de imagen
+-- 1️⃣ Tabla productos: agregar columna para ruta de imagen
 ALTER TABLE productos 
-ADD COLUMN imagen LONGBLOB NULL;
-
-ALTER TABLE productos 
-ADD COLUMN imagen_tipo VARCHAR(50) NULL;
+ADD COLUMN imagen VARCHAR(255);
 
 -- 2️⃣ Tabla mensajes: modificar fecha de registro para usar timestamp automático
 ALTER TABLE mensajes
@@ -18,16 +15,9 @@ MODIFY COLUMN fecha_registro TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP;
 ALTER TABLE usuarios 
 ADD COLUMN avatar_tipo VARCHAR(50) NULL;
 
--- 4️⃣ Tabla favoritos: cambiar la referencia de votado_id a productos(id)
--- Primero eliminar la llave foránea antigua
-ALTER TABLE favoritos
-DROP FOREIGN KEY usuario_votado;
+-- 4️⃣ Tabla usuarios: convertir el campo avatar a LONGBLOB para almacenar imagen real
+ALTER TABLE usuarios
+MODIFY COLUMN avatar LONGBLOB NULL;
 
--- Luego crear la nueva relación con productos
-ALTER TABLE favoritos
-ADD CONSTRAINT producto_votado
-FOREIGN KEY (votado_id) REFERENCES productos(id) 
-ON DELETE CASCADE 
-ON UPDATE CASCADE;
 
 -- 🔹 Fin de modificaciones

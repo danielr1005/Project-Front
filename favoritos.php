@@ -12,14 +12,13 @@ $conn = getDBConnection();
 /* ---------------------------
    🔄 AGREGAR / QUITAR FAVORITO
 --------------------------- */
-if (isset($_GET['producto_id'])) {
-    $producto_id = (int)$_GET['producto_id'];
+if (isset($_GET['vendedor_id'])) {
+    $vendedor_id = (int)$_GET['vendedor_id'];
     $usuario_id = $user['id'];
 
     // Revisar si ya existe
     $stmt = $conn->prepare("SELECT id FROM favoritos WHERE votante_id = ? AND votado_id = ?");
-    if (!$stmt) die("Error prepare: " . $conn->error);
-    $stmt->bind_param("ii", $usuario_id, $producto_id);
+    $stmt->bind_param("ii", $usuario_id, $vendedor_id);
     $stmt->execute();
     $existe = $stmt->get_result()->fetch_assoc();
     $stmt->close();
@@ -27,47 +26,39 @@ if (isset($_GET['producto_id'])) {
     if ($existe) {
         // Si ya existe → eliminar
         $stmt = $conn->prepare("DELETE FROM favoritos WHERE votante_id = ? AND votado_id = ?");
-        if (!$stmt) die("Error prepare delete: " . $conn->error);
     } else {
         // Si no existe → agregar
         $stmt = $conn->prepare("INSERT INTO favoritos (votante_id, votado_id) VALUES (?, ?)");
-        if (!$stmt) die("Error prepare insert: " . $conn->error);
     }
 
-    $stmt->bind_param("ii", $usuario_id, $producto_id);
-    if (!$stmt->execute()) die("Error execute: " . $stmt->error);
+    $stmt->bind_param("ii", $usuario_id, $vendedor_id);
+    $stmt->execute();
     $stmt->close();
 
-    // Redirigir
-    if (isset($_GET['redirect']) && $_GET['redirect'] === 'producto' && isset($_GET['id'])) {
-        header("Location: producto.php?id=" . (int)$_GET['id']);
-    } else {
-        header("Location: favoritos.php");
-    }
+    header("Location: favoritos.php");
     exit;
 }
 
-/* ------------------------------------------------------
-   📌 OBTENER FAVORITOS
----------------------------------------------------------*/
+/* ---------------------------
+   📌 OBTENER VENDEDORES FAVORITOS
+--------------------------- */
 $query = "
-    SELECT p.*, 
-           c.nombre AS categoria_nombre,
-           sc.nombre AS subcategoria_nombre,
-           e.nombre AS estado_nombre
+    SELECT u.id, u.nombre, u.descripcion, u.link, u.avatar
     FROM favoritos f
-    INNER JOIN productos p ON p.id = f.votado_id
-    INNER JOIN subcategorias sc ON p.subcategoria_id = sc.id
-    INNER JOIN categorias c ON sc.categoria_id = c.id
-    INNER JOIN estados e ON p.estado_id = e.id
+    INNER JOIN usuarios u ON f.votado_id = u.id
     WHERE f.votante_id = ?
 ";
+
 $stmt = $conn->prepare($query);
+
+if (!$stmt) {
+    die("❌ Error en prepare(): " . $conn->error . "<br><pre>$query</pre>");
+}
+
 $stmt->bind_param("i", $user['id']);
 $stmt->execute();
-$productos_favoritos = $stmt->get_result();
+$vendedores_favoritos = $stmt->get_result();
 $stmt->close();
-$conn->close();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -106,51 +97,61 @@ $conn->close();
     <main class="main">
         <div class="container">
             <div class="page-header">
-                <h1>Mis Favoritos</h1>
+                <h1>Mis Vendedores Favoritos</h1>
             </div>
             
-            <div class="products-grid">
-                <?php if ($productos_favoritos->num_rows > 0): ?>
-                    <?php while ($producto = $productos_favoritos->fetch_assoc()): ?>
-                        <div class="product-card">
-                            <a href="producto.php?id=<?php echo $producto['id']; ?>">
-                                <?php if (!empty($producto['imagen'])): ?>
-                                    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
-                                         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-                                         class="product-image">
-                                <?php else: ?>
-                                    <img src="images/placeholder.jpg"
-                                         alt="Sin imagen"
-                                         class="product-image">
-                                <?php endif; ?>
-                                <div class="product-info">
-                                    <h3 class="product-name"><?php echo htmlspecialchars($producto['nombre']); ?></h3>
-                                    <p class="product-price"><?php echo formatPrice($producto['precio']); ?></p>
-                                    <p class="product-category"><?php echo htmlspecialchars($producto['categoria_nombre']); ?> - 
-                                       <?php echo htmlspecialchars($producto['subcategoria_nombre']); ?></p>
-                                    <span class="product-status status-<?php echo $producto['estado_id']; ?>">
-                                        <?php echo htmlspecialchars($producto['estado_nombre']); ?>
-                                    </span>
-                                    <span class="product-stock">Disponibles: <?php echo $producto['disponibles']; ?></span>
-                                </div>
-                            </a>
+           <div class="products-grid">
+<?php if ($vendedores_favoritos->num_rows > 0): ?>
+    <?php while ($v = $vendedores_favoritos->fetch_assoc()): ?>
+        
+        <div class="product-card seller-card">
 
-                            <div class="product-actions">
-                                <a href="favoritos.php?producto_id=<?php echo $producto['id']; ?>&toggle=1"
-                                   class="btn-small"
-                                   onclick="return confirm('¿Quieres quitar este producto de tus favoritos?');">
-                                   Quitar de Favoritos
-                                </a>
-                            </div>
-                        </div>
-                    <?php endwhile; ?>
-                <?php else: ?>
-                    <div class="no-products">
-                        <p>No has agregado productos a tus favoritos todavía.</p>
-                        <a href="index.php" class="btn-primary">Explorar Productos</a>
-                    </div>
+            <!-- Avatar del vendedor -->
+            <img src="<?php echo getUserAvatarUrl($v['id']); ?>" 
+                alt="Avatar de <?php echo htmlspecialchars($v['nombre']); ?>"
+                class="product-image">
+
+            <div class="product-info">
+                <h3 class="product-name">
+                    <?php echo htmlspecialchars($v['nombre']); ?>
+                </h3>
+
+                <p class="product-category">
+                    <?php echo nl2br(htmlspecialchars($v['descripcion'] ?? '')); ?>
+                </p>
+
+                <?php if (!empty($v['link'])): ?>
+                <p>
+                    <a href="<?php echo htmlspecialchars($v['link']); ?>" target="_blank">
+                        🔗 Enlace del vendedor
+                    </a>
+                </p>
                 <?php endif; ?>
             </div>
+
+            <div class="product-actions">
+                <a href="perfil_publico.php?id=<?php echo $v['id']; ?>" class="btn-primary">
+                    Ver Perfil
+                </a>
+
+                <a href="favoritos.php?vendedor_id=<?php echo $v['id']; ?>"
+                   class="btn-small"
+                   onclick="return confirm('¿Quieres quitar a este vendedor de tus favoritos?');">
+                    Quitar de Favoritos
+                </a>
+            </div>
+
+        </div>
+
+    <?php endwhile; ?>
+
+<?php else: ?>
+    <div class="no-products">
+        <p>No has agregado vendedores a tus favoritos todavía.</p>
+        <a href="index.php" class="btn-primary">Explorar</a>
+    </div>
+<?php endif; ?>
+</div>
         </div>
     </main>
 
@@ -159,6 +160,5 @@ $conn->close();
             <p>&copy; 2025 Tu Mercado SENA. Todos los derechos reservados.</p>
         </div>
     </footer>
-    <script src="script.js"></script>
 </body>
 </html>

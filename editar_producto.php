@@ -245,7 +245,7 @@ $conn->close();
                         <label for="imagen">Nueva Imagen del Producto (opcional)</label>
                         <?php if (!empty($producto['imagen'])): ?>
                         <p>Imagen actual:</p>
-                    <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
+                <img src="<?php echo htmlspecialchars($producto['imagen']); ?>"
                     style="max-width: 200px; height: auto;">
                     <?php endif; ?>
                         <input type="file" id="imagen" name="imagen" accept="image/jpeg,image/jpg,image/png,image/gif">

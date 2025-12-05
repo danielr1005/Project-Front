@@ -75,8 +75,7 @@ if ($user && $user['id'] != $producto['vendedor_id']) {
 $isFavorite = false;
 if ($user) {
     // isProductFavorite() debe manejar internamente la conexión (volver a abrir si $conn no es global o usarla si lo es)
-    $isFavorite = isProductFavorite($user['id'], $producto_id); 
-}
+$isFavorite = isSellerFavorite($user['id'], $producto['vendedor_id']);}
 
 // Cerramos la conexión al final de toda la lógica de BD
 $conn->close(); 
@@ -127,15 +126,16 @@ $conn->close();
             <div class="product-detail">
                 <div class="product-image-section">
 
-                    <?php if (!empty($producto['imagen'])): ?>
-                        <img src="data:<?php echo $producto['imagen_tipo']; ?>;base64,<?php echo base64_encode($producto['imagen']); ?>"
-                            alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
-                            class="product-detail-image">
-                    <?php else: ?>
-                        <img src="images/placeholder.jpg"
-                            alt="Sin imagen"
-                            class="product-detail-image">
-                    <?php endif; ?>
+                  <?php if (!empty($producto['imagen']) && file_exists($producto['imagen'])): ?>
+         <img src="<?php echo htmlspecialchars($producto['imagen']); ?>"
+         alt="<?php echo htmlspecialchars($producto['nombre']); ?>"
+         class="product-detail-image">
+        <?php else: ?>
+         <img src="images/placeholder.jpg"
+         alt="Sin imagen"
+         class="product-detail-image">
+        <?php endif; ?>
+
 
                 </div>
                 <div class="product-detail-info">
@@ -176,7 +176,7 @@ $conn->close();
                             
                         <?php else: ?>
                            <?php if ($user['id'] != $producto['vendedor_id']): ?>
-<a href="favoritos.php?producto_id=<?php echo $producto['id']; ?>" 
+<a href="favoritos.php?vendedor_id=<?php echo $producto['vendedor_id']; ?>" 
    class="btn-favorite <?php echo $isFavorite ? 'active' : ''; ?>"
    title="<?php echo $isFavorite ? 'Quitar de Favoritos' : 'Añadir a Favoritos'; ?>">
    <?php echo $isFavorite ? '🤍 Favorito' : '❤️ Añadir a Favoritos'; ?>

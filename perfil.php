@@ -67,12 +67,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $avatar_tipo = $file['type'];
 
             // Preparar consulta
-            $stmtA = $conn->prepare("UPDATE usuarios SET avatar = ?, avatar_tipo = ? WHERE id = ?");
-            $null = NULL;
-            $stmtA->bind_param("sbi", $null, $avatar_tipo, $user['id']);
-
-            // Enviar datos binarios
-            $stmtA->send_long_data(0, $avatar_data);
+        $stmtA = $conn->prepare("UPDATE usuarios SET avatar = ?, avatar_tipo = ? WHERE id = ?");
+        $empty = '';
+        $stmtA->bind_param("bsi", $empty, $avatar_tipo, $user['id']);
+        $stmtA->send_long_data(0, $avatar_data);
 
             if ($stmtA->execute()) {
                 header('Location: perfil.php?section=perfil&status=avatar_success'); 
@@ -201,25 +199,19 @@ $conn->close();
                     
                     <div id="perfil" class="settings-section <?php echo $active_section === 'perfil' ? 'active' : ''; ?>">
                         <h2>Información Personal</h2>
-                        
-                    <form method="POST" action="perfil.php" id="avatarUploadForm" enctype="multipart/form-data" style="display:none;">
-    <input type="hidden" name="section" value="avatar">
-    <input type="file" id="avatarInputHidden" name="avatar_file" accept="image/*">
-    <button type="submit" id="avatarSubmitBtn">Subir Avatar</button>
-</form>
+                    
 <div class="profile-avatar-wrapper">
     <img id="avatarPhoto" src="<?php echo getUserAvatarUrl($user['id']); ?>" class="avatar-photo" alt="Avatar">
 
-    <!-- Formulario de subida de avatar -->
+    <!-- Formulario SOLO para el avatar -->
     <form method="POST" action="perfil.php" id="avatarUploadForm" enctype="multipart/form-data">
         <input type="hidden" name="section" value="avatar">
         <input type="file" id="avatarInputHidden" name="avatar_file" accept="image/*" style="display:none;">
-    </form>
 
-    <!-- Botón lápiz -->
-    <button id="avatarEditButton" class="avatar-edit-btn" title="Cambiar foto de perfil">
-        <img src="assests/icons/icono-lapiz.png" alt="Editar">
-    </button>
+        <button type="button" id="avatarEditButton" class="avatar-edit-btn" title="Cambiar foto de perfil">
+            <img src="assests/icons/icono-lapiz.png" alt="Editar">
+        </button>
+    </form>
 </div>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
@@ -247,7 +239,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 </script>
-                            <input type="hidden" name="section" value="perfil">
                             
                             <div class="settings-group">
                                 <h3>Datos Básicos</h3>
